@@ -1,0 +1,100 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  eyebrow: string;
+}
+
+const { title, eyebrow } = Astro.props;
+
+const policies = [
+  { href: '/politicas/envios', label: 'Envíos' },
+  { href: '/politicas/devoluciones', label: 'Devoluciones' },
+  { href: '/politicas/terminos', label: 'Términos y condiciones' },
+];
+
+const pathname = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Políticas' }, { label: title }]} />
+
+<section class="container-x grid gap-10 lg:grid-cols-12 mt-4 mb-20">
+  <aside class="lg:col-span-3">
+    <div class="lg:sticky lg:top-28 border border-[color:var(--color-ink)]/15 p-5 bg-[color:var(--color-paper-soft)]">
+      <span class="label-eyebrow">Políticas</span>
+      <ul class="mt-3 space-y-1">
+        {
+          policies.map((p) => {
+            const active = pathname === p.href;
+            return (
+              <li>
+                <a
+                  href={p.href}
+                  class:list={[
+                    'block py-1.5 text-sm font-medium border-l-2 pl-3',
+                    active
+                      ? 'border-[color:var(--color-rust)] text-[color:var(--color-rust)] font-bold'
+                      : 'border-transparent hover:border-[color:var(--color-ink)] hover:text-[color:var(--color-ink)]',
+                  ]}
+                >
+                  {p.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </aside>
+
+  <article class="lg:col-span-9 border-t border-[color:var(--color-ink)] pt-8 prose-policy">
+    <span class="label-eyebrow">{eyebrow}</span>
+    <h1 class="mt-3 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9] mb-8">{title}</h1>
+    <slot />
+  </article>
+</section>
+
+<style is:global>
+  .prose-policy h2 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+    padding-bottom: 0.5rem;
+  }
+  .prose-policy h3 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-policy p {
+    line-height: 1.65;
+    margin-bottom: 1rem;
+    max-width: 70ch;
+  }
+  .prose-policy ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+    line-height: 1.65;
+  }
+  .prose-policy ul li {
+    margin-bottom: 0.4rem;
+  }
+  .prose-policy strong { font-weight: 600; }
+  .prose-policy a { color: var(--color-rust); text-decoration: underline; text-underline-offset: 3px; }
+  .prose-policy mark {
+    background-color: #FFF1B5;
+    padding: 0 4px;
+    font-size: 0.85em;
+    color: #6E5400;
+    border-radius: 2px;
+  }
+</style>

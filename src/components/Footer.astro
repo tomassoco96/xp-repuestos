@@ -1,0 +1,89 @@
+---
+import siteData from '@/data/site.json';
+import { categories } from '@/lib/products';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] mt-24">
+  <div class="container-x py-16 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <a href="/" class="inline-flex items-center gap-2">
+        <span class="inline-flex items-center justify-center size-10 bg-[color:var(--color-rust)] text-[color:var(--color-paper)] font-display font-black text-2xl leading-none">XP</span>
+        <span class="font-display text-2xl font-extrabold uppercase">{siteData.nombre}</span>
+      </a>
+      <p class="mt-4 text-sm text-[color:var(--color-paper)]/70 max-w-xs leading-relaxed">
+        {siteData.descripcion}
+      </p>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Catálogo</h3>
+      <ul class="mt-4 space-y-2">
+        {
+          categories.map((c) => (
+            <li>
+              <a href={`/tienda/${c.slug}`} class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">
+                {c.nombre}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href="/tienda" class="text-sm font-semibold text-[color:var(--color-paper)] hover:text-[color:var(--color-rust)]">
+            Ver todos los productos →
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Información</h3>
+      <ul class="mt-4 space-y-2">
+        <li><a href="/nuestra-historia" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Nosotros</a></li>
+        <li><a href="/mayorista" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Mayorista</a></li>
+        <li><a href="/faqs" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Preguntas frecuentes</a></li>
+        <li><a href="/politicas/envios" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Envíos</a></li>
+        <li><a href="/politicas/devoluciones" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Devoluciones</a></li>
+        <li><a href="/politicas/terminos" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Términos y condiciones</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Contacto</h3>
+      <ul class="mt-4 space-y-2 text-sm text-[color:var(--color-paper)]/80">
+        <li>{siteData.direccion.calle}, {siteData.direccion.ciudad}</li>
+        <li>
+          <a href={`mailto:${siteData.email}`} class="hover:text-[color:var(--color-paper)]">{siteData.email}</a>
+        </li>
+        <li>
+          <a href={`https://wa.me/${siteData.whatsapp}`} class="hover:text-[color:var(--color-paper)]" target="_blank" rel="noopener">
+            WhatsApp {siteData.telefono}
+          </a>
+        </li>
+        <li>
+          <a href={siteData.redes.instagram.url} class="hover:text-[color:var(--color-paper)]" target="_blank" rel="noopener">
+            Instagram {siteData.redes.instagram.handle}
+          </a>
+        </li>
+      </ul>
+
+      <div class="mt-4">
+        <span class="text-xs uppercase tracking-widest text-[color:var(--color-paper)]/60">Horarios</span>
+        <ul class="mt-1 text-xs text-[color:var(--color-paper)]/80 space-y-0.5">
+          {siteData.horarios.map((h) => <li>{h}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="container-x py-5 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-[color:var(--color-paper)]/60">
+      <p>© {year} {siteData.nombre}. Todos los derechos reservados.</p>
+      <p class="flex items-center gap-2">
+        Aceptamos
+        {siteData.metodos_pago.map((m) => <span class="rounded border border-white/15 px-1.5 py-0.5">{m}</span>)}
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,156 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import {
+  products,
+  getCategoryBySlug,
+  getRelatedProducts,
+} from '@/lib/products';
+import { formatPrice, buildWhatsAppLink, buildProductWhatsAppMessage } from '@/lib/format';
+import siteData from '@/data/site.json';
+
+export function getStaticPaths() {
+  return products.map((p) => ({
+    params: { slug: p.slug },
+    props: { product: p },
+  }));
+}
+
+const { product } = Astro.props;
+const category = getCategoryBySlug(product.categoria);
+const related = getRelatedProducts(product.slug, 4);
+const wa = buildWhatsAppLink(siteData.whatsapp, buildProductWhatsAppMessage(product.nombre));
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.nombre,
+  image: product.imagen,
+  description: product.descripcion ?? product.nombre,
+  brand: { '@type': 'Brand', name: product.marca },
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: 'ARS',
+    price: product.precio,
+    availability: product.stock
+      ? 'https://schema.org/InStock'
+      : 'https://schema.org/OutOfStock',
+    url: `https://xp-repuestos.vercel.app/producto/${product.slug}`,
+  },
+};
+---
+
+<Layout
+  title={product.nombre}
+  description={product.descripcion ?? product.nombre}
+  schema={schema}
+>
+  <Breadcrumbs
+    items={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Tienda', href: '/tienda' },
+      ...(category ? [{ label: category.nombre, href: `/tienda/${category.slug}` }] : []),
+      { label: product.nombre },
+    ]}
+  />
+
+  <section class="container-x grid gap-10 lg:grid-cols-12 mt-4 mb-20">
+    <div class="lg:col-span-7">
+      <div class="product-img aspect-square border border-[color:var(--color-ink)]/15">
+        <img
+          src={product.imagen}
+          alt={product.nombre}
+          width="900"
+          height="900"
+          class="w-full h-full object-contain p-8"
+        />
+      </div>
+    </div>
+
+    <div class="lg:col-span-5 flex flex-col">
+      <div class="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+        <span class="text-[color:var(--color-rust)]">{product.marca}</span>
+        {product.stock ? (
+          <span class="inline-flex items-center gap-1.5 text-emerald-700">
+            <span class="size-1.5 rounded-full bg-emerald-600"></span>
+            En stock
+          </span>
+        ) : (
+          <span class="text-[color:var(--color-steel)]">Consultar disponibilidad</span>
+        )}
+      </div>
+
+      <h1 class="mt-3 font-display font-black uppercase text-3xl md:text-4xl leading-tight">
+        {product.nombre}
+      </h1>
+
+      <p class="mt-6 font-display font-black tabular text-5xl text-[color:var(--color-ink)]">
+        {formatPrice(product.precio)}
+      </p>
+      <p class="text-xs text-[color:var(--color-steel)] uppercase tracking-widest mt-1">
+        Precio final · IVA incluido
+      </p>
+
+      {product.descripcion && (
+        <p class="mt-6 text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+          {product.descripcion}
+        </p>
+      )}
+
+      {product.modelos && product.modelos.length > 0 && (
+        <div class="mt-6">
+          <p class="label-eyebrow">Compatible con</p>
+          <ul class="mt-2 flex flex-wrap gap-2">
+            {product.modelos.map((m) => (
+              <li class="chip">{m}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div class="mt-8 flex flex-col gap-3">
+        <a href={wa} target="_blank" rel="noopener" class="btn btn-wa text-base">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+          </svg>
+          Comprar por WhatsApp
+        </a>
+        <a href={`mailto:${siteData.email}?subject=${encodeURIComponent(`Consulta: ${product.nombre}`)}`} class="btn btn-ghost text-base">
+          Consultar por email
+        </a>
+      </div>
+
+      <div class="mt-10 grid grid-cols-3 gap-3 border-t border-[color:var(--color-ink)]/15 pt-6">
+        <div>
+          <p class="font-display font-black text-xl tabular text-[color:var(--color-rust)]">24h</p>
+          <p class="text-xs text-[color:var(--color-steel)] mt-0.5 uppercase tracking-widest">Despacho</p>
+        </div>
+        <div>
+          <p class="font-display font-black text-xl tabular text-[color:var(--color-rust)]">CABA</p>
+          <p class="text-xs text-[color:var(--color-steel)] mt-0.5 uppercase tracking-widest">Local físico</p>
+        </div>
+        <div>
+          <p class="font-display font-black text-xl tabular text-[color:var(--color-rust)]">AR</p>
+          <p class="text-xs text-[color:var(--color-steel)] mt-0.5 uppercase tracking-widest">Envío nacional</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="container-x mb-20">
+      <div class="flex items-end justify-between border-b border-[color:var(--color-ink)] pb-3 mb-6">
+        <h2 class="font-display uppercase font-extrabold text-2xl">Te puede servir</h2>
+        {category && (
+          <a href={`/tienda/${category.slug}`} class="text-sm font-display uppercase tracking-widest font-bold hover:text-[color:var(--color-rust)]">
+            Ver más en {category.nombre} →
+          </a>
+        )}
+      </div>
+      <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        {related.map((p) => <ProductCard product={p} />)}
+      </div>
+    </section>
+  )}
+</Layout>

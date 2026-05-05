@@ -1,0 +1,99 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import siteData from '@/data/site.json';
+import { buildWhatsAppLink } from '@/lib/format';
+
+const wa = buildWhatsAppLink(siteData.whatsapp, siteData.whatsapp_mensaje_default);
+
+const faqs = [
+  {
+    p: '¿Cómo sé si un repuesto es compatible con mi moto?',
+    r: 'En la ficha de cada producto listamos los modelos compatibles. Si tenés dudas, mandanos foto del repuesto y modelo de tu moto por WhatsApp y lo confirmamos antes de cobrarte.',
+  },
+  {
+    p: '¿Cuánto tarda el envío?',
+    r: 'Despachamos en 24 a 48 horas hábiles desde que se confirma el pago. Una vez en el correo, los tiempos dependen del destino: 1 a 3 días hábiles a CABA y GBA, 3 a 7 días hábiles al interior.',
+  },
+  {
+    p: '¿Hacen envíos a todo el país?',
+    r: `Sí. Trabajamos con OCA, Andreani y Correo Argentino. ${siteData.envio.destacado}.`,
+  },
+  {
+    p: '¿Qué métodos de pago aceptan?',
+    r: 'Tarjetas de crédito y débito (Visa, Mastercard, American Express, Diners Club), Mercado Pago y transferencia bancaria. Si comprás en el local también aceptamos efectivo.',
+  },
+  {
+    p: '¿Puedo retirar en el local?',
+    r: `Sí. Estamos en ${siteData.direccion.calle}, ${siteData.direccion.ciudad}. Si vas a retirar, avisanos por WhatsApp para tenerlo separado y confirmarte horario.`,
+  },
+  {
+    p: '¿El repuesto que llegó no es para mi moto. Qué hago?',
+    r: 'Cambio sin cargo: comunicate dentro de los 7 días corridos de recibido y coordinamos. El producto tiene que estar sin uso y en su empaque original.',
+  },
+  {
+    p: '¿Tienen precios mayoristas?',
+    r: 'Sí, para talleres y locales del rubro. Tenés todos los detalles del programa mayorista en la página correspondiente.',
+  },
+  {
+    p: '¿Trabajan con cuatriciclos?',
+    r: 'Sí, varios productos del catálogo son compatibles con cuatriciclos chinos y de calle. Consultanos por modelo específico.',
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.p,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: f.r,
+    },
+  })),
+};
+---
+
+<Layout
+  title="Preguntas frecuentes"
+  description="Envíos, pagos, devoluciones y compatibilidad de repuestos en XP Repuestos."
+  schema={schema}
+>
+  <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Preguntas frecuentes' }]} />
+
+  <section class="container-x mt-4 mb-20 grid gap-10 lg:grid-cols-12">
+    <div class="lg:col-span-8 border-t border-[color:var(--color-ink)] pt-8">
+      <span class="label-eyebrow">Preguntas frecuentes</span>
+      <h1 class="mt-3 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+        Lo que más<br />nos preguntan.
+      </h1>
+
+      <div class="mt-12 divide-y divide-[color:var(--color-ink)]/15">
+        {faqs.map((f, idx) => (
+          <details class="group py-5" open={idx === 0}>
+            <summary class="cursor-pointer list-none flex items-start justify-between gap-6">
+              <h2 class="font-display uppercase text-lg md:text-xl font-extrabold leading-tight">{f.p}</h2>
+              <span class="shrink-0 text-2xl font-display text-[color:var(--color-rust)] leading-none transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <p class="mt-3 max-w-2xl text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">{f.r}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+
+    <aside class="lg:col-span-4">
+      <div class="sticky top-28 bg-[color:var(--color-ink)] text-[color:var(--color-paper)] p-8">
+        <h3 class="font-display uppercase text-2xl font-extrabold leading-tight">
+          ¿Tu pregunta no está acá?
+        </h3>
+        <p class="mt-3 text-sm text-[color:var(--color-paper)]/75">
+          Mandanos un WhatsApp y te respondemos en horario comercial.
+        </p>
+        <a href={wa} target="_blank" rel="noopener" class="btn btn-wa mt-5 w-full">
+          Preguntar por WhatsApp
+        </a>
+      </div>
+    </aside>
+  </section>
+</Layout>

@@ -1,0 +1,71 @@
+---
+import type { Producto } from '@/lib/products';
+import { formatPrice, buildWhatsAppLink, buildProductWhatsAppMessage } from '@/lib/format';
+import siteData from '@/data/site.json';
+
+interface Props {
+  product: Producto;
+}
+
+const { product } = Astro.props;
+const wa = buildWhatsAppLink(siteData.whatsapp, buildProductWhatsAppMessage(product.nombre));
+---
+
+<article class="group flex flex-col h-full bg-[color:var(--color-bone)] border border-[color:var(--color-ink)]/10 hover:border-[color:var(--color-ink)] transition-colors">
+  <a href={`/producto/${product.slug}`} class="block product-img aspect-square overflow-hidden">
+    <img
+      src={product.imagen}
+      alt={product.nombre}
+      loading="lazy"
+      decoding="async"
+      width="600"
+      height="600"
+      class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+    />
+  </a>
+
+  <div class="flex flex-col flex-1 p-4 gap-2">
+    <div class="flex items-center justify-between gap-2 text-[10px] uppercase tracking-widest font-semibold">
+      <span class="text-[color:var(--color-rust)]">{product.marca}</span>
+      {product.stock ? (
+        <span class="text-emerald-700">En stock</span>
+      ) : (
+        <span class="text-[color:var(--color-steel)]">Consultar</span>
+      )}
+    </div>
+
+    <a href={`/producto/${product.slug}`} class="font-display uppercase font-bold text-base leading-tight line-clamp-3 hover:text-[color:var(--color-rust)] transition-colors min-h-[3.5rem]">
+      {product.nombre}
+    </a>
+
+    <p class="font-display text-2xl font-black tabular text-[color:var(--color-ink)] mt-1">
+      {formatPrice(product.precio)}
+    </p>
+
+    <div class="mt-auto pt-3 flex gap-2">
+      <a href={`/producto/${product.slug}`} class="btn btn-ghost flex-1 !px-3 !py-2 !text-[11px]">
+        Ver ficha
+      </a>
+      <a
+        href={wa}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-wa !px-3 !py-2"
+        aria-label={`Consultar por WhatsApp: ${product.nombre}`}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,44 @@
+{
+  "nombre": "XP Repuestos",
+  "tagline": "Repuestos y accesorios para motos en toda la Argentina",
+  "descripcion": "Repuestos originales y alternativos para motos y cuatriciclos. Más de 1.000 productos para Honda, Yamaha, Gilera, Zanella, Motomel, Keller y todas las marcas. Envíos a todo el país desde CABA.",
+  "telefono": "+54 987-6543",
+  "whatsapp": "5491198765643",
+  "whatsapp_mensaje_default": "Hola! Vengo de la web. Quería consultar por un repuesto.",
+  "email": "hola@xprepuestos.com.ar",
+  "direccion": {
+    "calle": "Montenegro 1627",
+    "ciudad": "CABA",
+    "pais": "Argentina"
+  },
+  "horarios": [
+    "Lunes a Viernes: 9:00 a 18:30",
+    "Sábados: 9:00 a 13:00",
+    "Domingos: cerrado"
+  ],
+  "redes": {
+    "instagram": {
+      "handle": "@xp.repuestos",
+      "url": "https://instagram.com/xp.repuestos"
+    }
+  },
+  "metodos_pago": ["Visa", "Mastercard", "American Express", "Diners Club", "Mercado Pago", "Transferencia"],
+  "envio": {
+    "destacado": "Envío gratis en compras superiores a $80.000",
+    "cobertura": "Envíamos a todo el país por OCA, Andreani y Correo Argentino"
+  },
+  "hero": {
+    "kicker": "Repuestos para motos · CABA",
+    "titulo_1": "Tu moto",
+    "titulo_2": "no para",
+    "subtitulo": "Más de 1.000 repuestos originales y alternativos para Honda, Yamaha, Gilera, Zanella y todas las marcas que rodean en la calle. Llegamos a todo el país.",
+    "cta_primario": "Ver catálogo",
+    "cta_secundario": "Consultar por WhatsApp"
+  },
+  "trust_bar": [
+    { "valor": "+1.000", "etiqueta": "repuestos en stock" },
+    { "valor": "20+", "etiqueta": "marcas que cubrimos" },
+    { "valor": "24h", "etiqueta": "respuesta promedio" },
+    { "valor": "CABA", "etiqueta": "atención personalizada" }
+  ]
+}

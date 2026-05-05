@@ -1,0 +1,25 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import siteData from '@/data/site.json';
+import { buildWhatsAppLink } from '@/lib/format';
+
+const wa = buildWhatsAppLink(
+  siteData.whatsapp,
+  'Hola! Estaba navegando la web y llegué a una página que no existe. Quería consultar por un repuesto.',
+);
+---
+
+<Layout title="Página no encontrada">
+  <section class="container-x py-32 text-center">
+    <p class="font-display font-black text-[8rem] md:text-[12rem] leading-none text-[color:var(--color-rust)] tabular">404</p>
+    <h1 class="mt-4 font-display font-black uppercase text-3xl md:text-5xl">Esta página se rompió</h1>
+    <p class="mt-4 max-w-lg mx-auto text-base text-[color:var(--color-ink-soft)]/75">
+      No encontramos lo que buscás. Podés volver al inicio, ir directo al catálogo, o si el repuesto que querías estaba acá, escribinos por WhatsApp y lo conseguimos.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/" class="btn btn-dark">Volver al inicio</a>
+      <a href="/tienda" class="btn btn-ghost">Ir al catálogo</a>
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-wa">Consultar por WhatsApp</a>
+    </div>
+  </section>
+</Layout>

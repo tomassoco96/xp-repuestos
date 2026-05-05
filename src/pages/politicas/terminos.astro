@@ -1,0 +1,92 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PolicyLayout from '@/components/PolicyLayout.astro';
+import siteData from '@/data/site.json';
+---
+
+<Layout
+  title="Términos y condiciones"
+  description="Términos y condiciones de uso del sitio web y compras en XP Repuestos."
+>
+  <PolicyLayout title="Términos y condiciones" eyebrow="Aspectos legales">
+    <p>
+      Los presentes términos y condiciones regulan el uso del sitio xp-repuestos y la relación comercial entre <strong>{siteData.nombre}</strong> y sus clientes. Al realizar una compra, el cliente declara haber leído y aceptado estos términos.
+    </p>
+
+    <h2>1. Identificación del comercio</h2>
+    <p>
+      <strong>{siteData.nombre}</strong> opera desde <strong>{siteData.direccion.calle}, {siteData.direccion.ciudad}</strong>, Argentina. Para consultas o reclamos podés escribirnos a <a href={`mailto:${siteData.email}`}>{siteData.email}</a> o por WhatsApp al <strong>{siteData.telefono}</strong>.
+    </p>
+
+    <h2>2. Ámbito de aplicación</h2>
+    <p>
+      Estos términos rigen exclusivamente las operaciones realizadas a través de este sitio web y los canales asociados (WhatsApp, email y local físico). El acceso al sitio es libre y gratuito; la realización de una compra requiere proporcionar datos personales y de envío veraces.
+    </p>
+
+    <h2>3. Productos y precios</h2>
+    <p>
+      Todos los productos publicados están sujetos a disponibilidad de stock. Los precios están expresados en <strong>pesos argentinos (ARS)</strong> e incluyen el IVA correspondiente. Nos reservamos el derecho de modificar precios sin previo aviso; el precio aplicable es el vigente al momento de cerrar la compra.
+    </p>
+
+    <h2>4. Compatibilidad de los repuestos</h2>
+    <p>
+      Hacemos nuestro mejor esfuerzo por listar correctamente los modelos compatibles con cada producto. Aun así, recomendamos al cliente confirmar la compatibilidad por WhatsApp antes de cerrar la compra, especialmente en motos modificadas o de modelos no estándar. El cambio por incompatibilidad está cubierto por la <a href="/politicas/devoluciones">política de devoluciones</a>.
+    </p>
+
+    <h2>5. Proceso de compra</h2>
+    <p>
+      La compra se inicia desde la web (con redirección a WhatsApp para confirmar disponibilidad y forma de pago) o directamente por WhatsApp. La operación queda confirmada al acreditarse el pago. Hasta ese momento, el stock no queda reservado.
+    </p>
+
+    <h2>6. Métodos de pago</h2>
+    <p>Aceptamos los siguientes medios de pago:</p>
+    <ul>
+      <li>Tarjetas de crédito y débito: {siteData.metodos_pago.filter((m) => m !== 'Mercado Pago' && m !== 'Transferencia').join(', ')}.</li>
+      <li>Mercado Pago (incluye QR, link y financiación según promociones vigentes).</li>
+      <li>Transferencia bancaria.</li>
+      <li>Efectivo (solo en local físico).</li>
+    </ul>
+
+    <h2>7. Envíos</h2>
+    <p>
+      Las condiciones de envío, tiempos y costos están detalladas en la <a href="/politicas/envios">política de envíos</a>.
+    </p>
+
+    <h2>8. Cambios y devoluciones</h2>
+    <p>
+      El procedimiento, plazos y excepciones se detallan en la <a href="/politicas/devoluciones">política de devoluciones</a>, conforme a la Ley 24.240 de Defensa del Consumidor.
+    </p>
+
+    <h2>9. Privacidad y datos personales</h2>
+    <p>
+      Los datos que nos proporcionás (nombre, email, teléfono, dirección de envío y datos de pago) se utilizan exclusivamente para procesar y gestionar tus compras y para comunicaciones relacionadas. No los compartimos con terceros excepto con las empresas logísticas (OCA, Andreani, Correo Argentino) y procesadores de pago (Mercado Pago, etc.) en lo estrictamente necesario para concretar la operación. El tratamiento de datos se realiza conforme a la Ley 25.326 de Protección de Datos Personales.
+    </p>
+
+    <h2>10. Propiedad intelectual</h2>
+    <p>
+      El contenido del sitio (textos, imágenes propias, logo y disposición visual) es propiedad de {siteData.nombre} o de sus respectivos titulares y no puede ser reproducido sin autorización. Las marcas mencionadas (Honda, Yamaha, Gilera, Zanella, etc.) son propiedad de sus respectivos titulares y se utilizan a los solos fines descriptivos para identificar la compatibilidad de repuestos.
+    </p>
+
+    <h2>11. Limitación de responsabilidad</h2>
+    <p>
+      {siteData.nombre} no se responsabiliza por daños derivados de instalaciones realizadas por personal no calificado, uso de repuestos en aplicaciones no recomendadas por el fabricante, ni por demoras logísticas atribuibles a las empresas de transporte.
+    </p>
+
+    <h2>12. Modificaciones</h2>
+    <p>
+      Nos reservamos el derecho de modificar estos términos en cualquier momento. Las modificaciones aplican a las operaciones realizadas con posterioridad a la publicación de la versión actualizada en este sitio.
+    </p>
+
+    <h2>13. Jurisdicción</h2>
+    <p>
+      Cualquier conflicto derivado de estos términos se rige por la legislación argentina y se somete a la jurisdicción de los tribunales ordinarios competentes con asiento en la Ciudad Autónoma de Buenos Aires, salvo que el consumidor decida acudir a la jurisdicción de su domicilio.
+    </p>
+
+    <p style="font-size: 0.85em; color: var(--color-steel); margin-top: 3rem;">
+      <mark>{`{{REVISAR}}`}</mark> contrastar contra la operatoria real (razón social, CUIT, métodos de pago efectivos) y, si corresponde, hacer revisar por un asesor legal antes de publicar.
+    </p>
+    <p style="font-size: 0.85em; color: var(--color-steel);">
+      Última actualización: 2026-05-05.
+    </p>
+  </PolicyLayout>
+</Layout>

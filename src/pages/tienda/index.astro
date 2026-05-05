@@ -1,0 +1,41 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import CategoryCard from '@/components/CategoryCard.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { categories, products } from '@/lib/products';
+---
+
+<Layout title="Tienda" description="Catálogo completo de XP Repuestos. Repuestos y accesorios para motos en Argentina.">
+  <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Tienda' }]} />
+
+  <section class="container-x">
+    <div class="border-t border-[color:var(--color-ink)] pt-8">
+      <span class="label-eyebrow">Tienda</span>
+      <h1 class="mt-3 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+        Catálogo<br />completo
+      </h1>
+      <p class="mt-6 max-w-xl text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+        {products.length} productos cargados. Filtrá por categoría o navegá toda la lista. Si buscás algo que no aparece, escribinos por WhatsApp con el modelo de tu moto y lo conseguimos.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x mt-12">
+    <h2 class="font-display uppercase font-extrabold text-xl mb-4">Categorías</h2>
+    <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      {categories.map((c) => <CategoryCard category={c} />)}
+    </div>
+  </section>
+
+  <section class="container-x mt-16">
+    <div class="flex items-end justify-between border-b border-[color:var(--color-ink)] pb-3 mb-6">
+      <h2 class="font-display uppercase font-extrabold text-2xl">Todos los productos</h2>
+      <span class="text-sm text-[color:var(--color-steel)]">{products.length} productos</span>
+    </div>
+
+    <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      {products.map((p) => <ProductCard product={p} />)}
+    </div>
+  </section>
+</Layout>

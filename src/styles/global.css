@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Saira Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-ink: #0E0E0E;
+  --color-ink-soft: #1B1B1B;
+  --color-paper: #F4EDE0;
+  --color-paper-soft: #FAF7F1;
+  --color-bone: #FFFFFF;
+  --color-rust: #E63946;
+  --color-rust-deep: #B7232E;
+  --color-rust-soft: #FBE2E5;
+  --color-chrome: #F4D04E;
+  --color-steel: #6E6E6E;
+  --color-steel-soft: #C8C2B8;
+  --color-line: #1F1F1F;
+
+  --shadow-card: 0 1px 0 rgba(14,14,14,0.06), 0 6px 18px -10px rgba(14,14,14,0.18);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background-color: var(--color-rust);
+    color: var(--color-bone);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Focus visible for keyboard nav */
+  *:focus-visible {
+    outline: 2px solid var(--color-rust);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1240px] px-5 md:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 font-semibold text-sm uppercase tracking-wide transition-all duration-200;
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
+  }
+
+  .btn-primary {
+    background-color: var(--color-rust);
+    color: var(--color-bone);
+  }
+  .btn-primary:hover {
+    background-color: var(--color-rust-deep);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-ink);
+    border: 1.5px solid var(--color-ink);
+  }
+  .btn-ghost:hover {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+  }
+
+  .btn-dark {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+  }
+  .btn-dark:hover {
+    background-color: var(--color-line);
+  }
+
+  .btn-wa {
+    background-color: #25D366;
+    color: white;
+  }
+  .btn-wa:hover {
+    background-color: #1FB456;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-[color:var(--color-ink)]/15 px-3 py-1 text-xs font-medium;
+    font-family: var(--font-body);
+  }
+
+  .label-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    color: var(--color-rust);
+  }
+
+  .grid-noise {
+    background-image:
+      linear-gradient(0deg, transparent 24%, rgba(14,14,14,0.04) 25%, rgba(14,14,14,0.04) 26%, transparent 27%, transparent 74%, rgba(14,14,14,0.04) 75%, rgba(14,14,14,0.04) 76%, transparent 77%),
+      linear-gradient(90deg, transparent 24%, rgba(14,14,14,0.04) 25%, rgba(14,14,14,0.04) 26%, transparent 27%, transparent 74%, rgba(14,14,14,0.04) 75%, rgba(14,14,14,0.04) 76%, transparent 77%);
+    background-size: 64px 64px;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 3rem;
+    animation: ticker 40s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .product-img {
+    background-color: var(--color-bone);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(230,57,70,0.06), transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(244,208,78,0.08), transparent 50%);
+  }
+}
+
+/* Number formatting helper for prices */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

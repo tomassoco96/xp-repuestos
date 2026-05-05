@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "cascos",
+    "nombre": "Cascos",
+    "descripcion": "Cascos integrales y abiertos. Marcas Vertigo y todas las certificaciones requeridas para circular.",
+    "icono": "helmet",
+    "destacado": true
+  },
+  {
+    "slug": "motor",
+    "nombre": "Motor",
+    "descripcion": "Kits de pistón, distribución, árbol de levas, caja de cambios, carburador y todo lo que mueve a tu moto.",
+    "icono": "engine",
+    "destacado": true
+  },
+  {
+    "slug": "electrico",
+    "nombre": "Eléctrico",
+    "descripcion": "Tableros completos, faros, lámparas, destelladores y bendix de arranque. Para que nunca te dejen a pie.",
+    "icono": "bolt",
+    "destacado": true
+  },
+  {
+    "slug": "rodante",
+    "nombre": "Rodante y suspensión",
+    "descripcion": "Ejes, mazas, rayos, retenes, bujes y resortes. La parte de la moto que toca el piso.",
+    "icono": "wheel",
+    "destacado": true
+  },
+  {
+    "slug": "tornilleria",
+    "nombre": "Tornillería y accesorios",
+    "descripcion": "Tornillos, tuercas, esparragos y accesorios chicos que siempre se rompen primero.",
+    "icono": "wrench",
+    "destacado": false
+  }
+]

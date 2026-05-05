@@ -1,0 +1,58 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PolicyLayout from '@/components/PolicyLayout.astro';
+import siteData from '@/data/site.json';
+---
+
+<Layout
+  title="Política de devoluciones"
+  description="Cambios y devoluciones en XP Repuestos: plazo, condiciones y procedimiento."
+>
+  <PolicyLayout title="Política de devoluciones" eyebrow="Cambios y devoluciones">
+    <p>
+      En XP Repuestos queremos que recibas el repuesto correcto. Si el producto que llegó no es el que necesitabas o no es compatible con tu moto, te lo cambiamos sin vueltas siempre que se cumplan las condiciones de esta política.
+    </p>
+
+    <h2>Plazo</h2>
+    <p>
+      Tenés <strong>10 días corridos</strong> desde la recepción del pedido para iniciar una solicitud de cambio o devolución, según lo establece la Ley de Defensa del Consumidor (Ley 24.240) para compras a distancia.
+    </p>
+
+    <h2>Condiciones</h2>
+    <ul>
+      <li>El producto debe estar <strong>sin uso</strong>, en su empaque original y con todos sus accesorios o componentes.</li>
+      <li>No debe presentar marcas, golpes, rayones o suciedad que indiquen que fue instalado o probado en una moto.</li>
+      <li>Para cascos: el plástico de la visera debe estar sin retirar y la etiqueta interna debe seguir presente.</li>
+      <li>El cliente debe contar con el comprobante de compra (mail de confirmación o factura).</li>
+    </ul>
+
+    <h2>Cómo iniciar el cambio</h2>
+    <ol style="list-style: decimal; padding-left: 1.25rem; margin-bottom: 1rem; line-height: 1.65;">
+      <li>Escribinos por <a href={`https://wa.me/${siteData.whatsapp}`}>WhatsApp</a> con tu número de pedido y una foto del producto.</li>
+      <li>Te respondemos confirmando el motivo y la modalidad: cambio por otro producto, nota de crédito o devolución del importe.</li>
+      <li>Coordinamos el envío del producto a nuestro local o el retiro a domicilio (según corresponda).</li>
+      <li>Una vez recibido y verificado, procesamos la operación dentro de los 5 días hábiles.</li>
+    </ol>
+
+    <h2>Costo del envío en cambios</h2>
+    <p>
+      Si el cambio es por error nuestro (te enviamos algo distinto a lo comprado), el envío de ida y vuelta corre por nuestra cuenta. Si el cambio es por un error de compatibilidad o cambio de opinión del cliente, el costo del envío de devolución y reenvío del nuevo producto queda a cargo del cliente.
+    </p>
+
+    <h2>Productos defectuosos</h2>
+    <p>
+      Si el producto llega con un defecto de fábrica o daño por el transporte, comunicate dentro de las <strong>48 horas</strong> de recibido con foto y descripción del problema. Lo reemplazamos sin costo.
+    </p>
+
+    <h2>Productos que no aceptan devolución</h2>
+    <ul>
+      <li>Productos personalizados o pedidos especiales bajo orden.</li>
+      <li>Liquidaciones o productos marcados como "última unidad" o "saldo".</li>
+      <li>Productos visiblemente usados o con marcas de instalación.</li>
+    </ul>
+
+    <p style="font-size: 0.85em; color: var(--color-steel); margin-top: 3rem;">
+      <mark>{`{{REVISAR}}`}</mark> ajustar plazos o excepciones según operatoria habitual del local antes de publicar a producción.
+    </p>
+  </PolicyLayout>
+</Layout>

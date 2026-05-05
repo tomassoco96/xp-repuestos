@@ -1,0 +1,54 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import PolicyLayout from '@/components/PolicyLayout.astro';
+import siteData from '@/data/site.json';
+---
+
+<Layout
+  title="Política de envíos"
+  description="Política de envíos de XP Repuestos: tiempos, costos y empresas de logística."
+>
+  <PolicyLayout title="Política de envíos" eyebrow="Logística">
+    <p>
+      En XP Repuestos enviamos a todo el país. Trabajamos con OCA, Andreani y Correo Argentino. La empresa logística la elegís vos al momento de cerrar la compra (por WhatsApp o desde el carrito), según costo y velocidad de entrega a tu zona.
+    </p>
+
+    <h2>Tiempos de despacho</h2>
+    <p>
+      Despachamos los pedidos confirmados <strong>dentro de las 24 a 48 horas hábiles</strong> desde que se acredita el pago. Los pedidos cargados los fines de semana o feriados se despachan el siguiente día hábil.
+    </p>
+
+    <h2>Tiempos de entrega</h2>
+    <p>Una vez en el correo, los tiempos dependen del destino:</p>
+    <ul>
+      <li><strong>CABA y GBA:</strong> 1 a 3 días hábiles.</li>
+      <li><strong>Centro del país:</strong> 2 a 5 días hábiles.</li>
+      <li><strong>NOA, NEA, Patagonia y Cuyo:</strong> 3 a 7 días hábiles.</li>
+    </ul>
+    <p>Estos plazos son estimados de los correos y pueden variar por demoras logísticas o climáticas.</p>
+
+    <h2>Costos de envío</h2>
+    <p>
+      El costo se calcula automáticamente al ingresar el código postal de destino, según peso y dimensiones del pedido y la empresa elegida. <strong>{siteData.envio.destacado}</strong>.
+    </p>
+
+    <h2>Retiro en local</h2>
+    <p>
+      Si estás en CABA, podés retirar tu pedido sin costo en <strong>{siteData.direccion.calle}, {siteData.direccion.ciudad}</strong>. Una vez confirmado el pago, te avisamos por WhatsApp cuando esté listo (generalmente el mismo día). El horario de retiro es el horario de atención del local.
+    </p>
+
+    <h2>Seguimiento</h2>
+    <p>
+      Cuando despachamos tu pedido te enviamos por email y WhatsApp el código de seguimiento de la empresa logística para que puedas consultar el estado en tiempo real desde la web del correo.
+    </p>
+
+    <h2>Pedidos no entregados</h2>
+    <p>
+      Si el correo no logra entregar el paquete después de los intentos correspondientes, lo guardan en sucursal por un plazo limitado. Si no se retira a tiempo, vuelve a nuestro depósito y deberás abonar un nuevo costo de reenvío.
+    </p>
+
+    <p style="font-size: 0.85em; color: var(--color-steel); margin-top: 3rem;">
+      <mark>{`{{REVISAR}}`}</mark> los tiempos y la modalidad de retiro contra la operación real del local antes de publicar a producción.
+    </p>
+  </PolicyLayout>
+</Layout>

@@ -1,0 +1,55 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import { categories, getProductsByCategory } from '@/lib/products';
+
+export function getStaticPaths() {
+  return categories.map((c) => ({
+    params: { categoria: c.slug },
+    props: { category: c },
+  }));
+}
+
+const { category } = Astro.props;
+const productos = getProductsByCategory(category.slug);
+---
+
+<Layout
+  title={category.nombre}
+  description={category.descripcion}
+>
+  <Breadcrumbs
+    items={[
+      { label: 'Inicio', href: '/' },
+      { label: 'Tienda', href: '/tienda' },
+      { label: category.nombre },
+    ]}
+  />
+
+  <section class="container-x">
+    <div class="border-t border-[color:var(--color-ink)] pt-8">
+      <span class="label-eyebrow">Categoría</span>
+      <h1 class="mt-3 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">{category.nombre}</h1>
+      <p class="mt-6 max-w-2xl text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+        {category.descripcion}
+      </p>
+      <p class="mt-3 text-sm text-[color:var(--color-steel)]">{productos.length} productos en esta categoría</p>
+    </div>
+  </section>
+
+  <section class="container-x mt-10 mb-16">
+    {productos.length === 0 ? (
+      <div class="border border-dashed border-[color:var(--color-ink)]/30 p-10 text-center">
+        <p class="font-display uppercase text-xl">Próximamente</p>
+        <p class="mt-2 text-sm text-[color:var(--color-steel)]">
+          Estamos cargando productos en esta categoría. Mientras tanto, consultanos por WhatsApp con lo que necesitás.
+        </p>
+      </div>
+    ) : (
+      <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        {productos.map((p) => <ProductCard product={p} />)}
+      </div>
+    )}
+  </section>
+</Layout>

@@ -1,0 +1,133 @@
+---
+import siteData from '@/data/site.json';
+import { categories } from '@/lib/products';
+
+const navLinks = [
+  { href: '/', label: 'Inicio' },
+  { href: '/tienda', label: 'Tienda' },
+  { href: '/mayorista', label: 'Mayorista' },
+  { href: '/nuestra-historia', label: 'Nosotros' },
+  { href: '/contacto', label: 'Contacto' },
+];
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<div class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] text-xs">
+  <div class="container-x flex flex-wrap items-center justify-between gap-2 py-2">
+    <span class="flex items-center gap-2">
+      <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-rust)]" aria-hidden="true"></span>
+      <span class="font-medium tracking-wide uppercase">{siteData.envio.destacado}</span>
+    </span>
+    <span class="hidden md:inline-block opacity-80">
+      {siteData.direccion.calle}, {siteData.direccion.ciudad} · {siteData.horarios[0]}
+    </span>
+  </div>
+</div>
+
+<header class="sticky top-0 z-40 border-b border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-paper)]/80">
+  <div class="container-x flex items-center justify-between gap-6 py-4">
+    <a href="/" class="flex items-center gap-2 group" aria-label="XP Repuestos · inicio">
+      <span class="inline-flex items-center justify-center size-9 bg-[color:var(--color-ink)] text-[color:var(--color-rust)] font-display font-black text-xl leading-none group-hover:bg-[color:var(--color-rust)] group-hover:text-[color:var(--color-paper)] transition">XP</span>
+      <span class="font-display text-2xl font-extrabold tracking-tight uppercase leading-none hidden sm:inline">{siteData.nombre}</span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-8" aria-label="Navegación principal">
+      {
+        navLinks.map((l) => {
+          const isActive = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
+          return (
+            <a
+              href={l.href}
+              class:list={[
+                'font-display uppercase tracking-wide text-sm font-semibold transition',
+                isActive
+                  ? 'text-[color:var(--color-rust)]'
+                  : 'text-[color:var(--color-ink)] hover:text-[color:var(--color-rust)]',
+              ]}
+            >
+              {l.label}
+            </a>
+          );
+        })
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={`https://wa.me/${siteData.whatsapp}?text=${encodeURIComponent(siteData.whatsapp_mensaje_default)}`}
+        class="btn btn-primary text-xs hidden sm:inline-flex"
+        target="_blank"
+        rel="noopener"
+      >
+        Consultar
+      </a>
+
+      <button
+        type="button"
+        id="nav-toggle"
+        class="lg:hidden inline-flex items-center justify-center size-10 rounded-md border border-[color:var(--color-ink)]/15"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile nav -->
+  <nav
+    id="mobile-nav"
+    class="lg:hidden hidden border-t border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]"
+    aria-label="Navegación móvil"
+  >
+    <ul class="container-x py-4 flex flex-col gap-1">
+      {
+        navLinks.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class="block py-2 font-display uppercase font-semibold text-base hover:text-[color:var(--color-rust)]"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-2 border-t border-[color:var(--color-ink)]/10 mt-2">
+        <span class="label-eyebrow">Categorías</span>
+        <ul class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+          {
+            categories.map((c) => (
+              <li>
+                <a
+                  href={`/tienda/${c.slug}`}
+                  class="block py-1.5 text-sm font-medium text-[color:var(--color-ink-soft)] hover:text-[color:var(--color-rust)]"
+                >
+                  {c.nombre}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('nav-toggle');
+    const nav = document.getElementById('mobile-nav');
+    if (!toggle || !nav) return;
+    toggle.addEventListener('click', () => {
+      const isOpen = !nav.classList.contains('hidden');
+      nav.classList.toggle('hidden');
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      toggle.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
+    });
+  });
+</script>

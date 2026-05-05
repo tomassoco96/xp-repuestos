@@ -1,0 +1,89 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import siteData from '@/data/site.json';
+import { buildWhatsAppLink } from '@/lib/format';
+
+const wa = buildWhatsAppLink(siteData.whatsapp, siteData.whatsapp_mensaje_default);
+---
+
+<Layout
+  title="Nuestra historia"
+  description="XP Repuestos: repuestos y accesorios para motos en CABA. Atención personalizada y stock real."
+>
+  <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Nuestra historia' }]} />
+
+  <section class="container-x grid gap-10 lg:grid-cols-12 mt-4 mb-20">
+    <div class="lg:col-span-8 border-t border-[color:var(--color-ink)] pt-8">
+      <span class="label-eyebrow">Quiénes somos</span>
+      <h1 class="mt-3 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+        XP Repuestos
+      </h1>
+      <p class="mt-6 text-lg text-[color:var(--color-ink-soft)]/85 leading-relaxed">
+        Somos un comercio de repuestos y accesorios para motos en {siteData.direccion.ciudad}. Trabajamos con motos chicas (110cc), medianas y de calle: Honda CG y Wave, Yamaha YBR, Gilera Smash, Zanella RX, Motomel, Keller y todas las marcas que rodean la ciudad y el interior.
+      </p>
+      <p class="mt-5 text-base text-[color:var(--color-ink-soft)]/75 leading-relaxed">
+        No somos una multinacional. Somos un local físico en {siteData.direccion.calle} donde recibimos tornilleros, mecánicos, talleres del barrio y motoqueros que se hacen sus propios arreglos. Esa cercanía con el cliente final marca cómo trabajamos: cuando alguien nos pregunta qué pistón le entra a su Smash, le contestamos lo que le entra, no lo que tenemos cargado en stock.
+      </p>
+
+      <h2 class="mt-12 font-display uppercase font-extrabold text-2xl border-b border-[color:var(--color-ink)] pb-2">
+        Cómo trabajamos
+      </h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        <div>
+          <h3 class="font-display uppercase font-bold text-lg">Stock real</h3>
+          <p class="mt-2 text-sm text-[color:var(--color-ink-soft)]/75 leading-relaxed">
+            Lo que ves publicado lo tenemos. Si está agotado, lo marcamos. Si no podemos confirmar, lo decimos.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-display uppercase font-bold text-lg">Compatibilidad antes de cobrar</h3>
+          <p class="mt-2 text-sm text-[color:var(--color-ink-soft)]/75 leading-relaxed">
+            Confirmamos por WhatsApp qué modelo te entra antes de procesar la venta. Si comprás algo que no es para tu moto, te lo cambiamos.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-display uppercase font-bold text-lg">Atención por personas</h3>
+          <p class="mt-2 text-sm text-[color:var(--color-ink-soft)]/75 leading-relaxed">
+            Hablás con alguien del local que conoce las motos, no con un chatbot ni con un call center.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-display uppercase font-bold text-lg">Envío a todo el país</h3>
+          <p class="mt-2 text-sm text-[color:var(--color-ink-soft)]/75 leading-relaxed">
+            Por OCA, Andreani y Correo Argentino. Despachamos de lunes a viernes.
+          </p>
+        </div>
+      </div>
+
+      <h2 class="mt-12 font-display uppercase font-extrabold text-2xl border-b border-[color:var(--color-ink)] pb-2">
+        Marcas y modelos que trabajamos
+      </h2>
+      <p class="mt-4 text-base leading-relaxed text-[color:var(--color-ink-soft)]/85">
+        <strong>Honda:</strong> CG Titan, CG 125/150, Wave, NF 100, CB1 125, CB Twister, XR 250 Tornado.
+        <strong class="block mt-3">Yamaha:</strong> YBR 125, Factor, RX 150.
+        <strong class="block mt-3">Otras:</strong> Gilera Smash 110, Zanella RX/ZB/Sapucai, Motomel Bit/Blitz/CG S2, Keller Crono Classic/Bit, Mondial LD/RD/BK, Suzuki AX 100/115, Beta BS/BK, Guerrero Trip, cuatriciclos.
+      </p>
+      <p class="mt-3 text-sm text-[color:var(--color-steel)]">
+        ¿No ves la tuya? Escribinos — probablemente la trabajamos.
+      </p>
+    </div>
+
+    <aside class="lg:col-span-4">
+      <div class="sticky top-28 space-y-4">
+        <div class="border border-[color:var(--color-ink)]/15 p-6">
+          <span class="label-eyebrow">Visitanos</span>
+          <p class="mt-2 font-display uppercase text-xl font-extrabold">{siteData.direccion.calle}</p>
+          <p class="text-sm text-[color:var(--color-ink-soft)]/75">{siteData.direccion.ciudad}</p>
+          <ul class="mt-4 text-xs space-y-1 text-[color:var(--color-ink-soft)]/75">
+            {siteData.horarios.map((h) => <li>{h}</li>)}
+          </ul>
+        </div>
+
+        <a href={wa} target="_blank" rel="noopener" class="btn btn-wa w-full">
+          Escribinos
+        </a>
+      </div>
+    </aside>
+  </section>
+</Layout>

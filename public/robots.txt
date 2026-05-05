@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xp-repuestos.vercel.app/sitemap-index.xml
