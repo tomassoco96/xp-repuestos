@@ -50,11 +50,20 @@ export function getClientIp(request: Request): string {
 export function isSameOrigin(request: Request): boolean {
   const origin = request.headers.get('origin');
   const referer = request.headers.get('referer');
-  const expected = import.meta.env.PUBLIC_SITE_URL;
-  if (!expected) return false;
+
+  // Si está configurada PUBLIC_SITE_URL la usamos como fuente autoritativa.
+  // Si no, usamos la host del propio request (auto-detección).
+  let expectedHost: string;
+  try {
+    const expected = import.meta.env.PUBLIC_SITE_URL;
+    expectedHost = expected
+      ? new URL(expected).host
+      : new URL(request.url).host;
+  } catch {
+    return false;
+  }
 
   try {
-    const expectedHost = new URL(expected).host;
     if (origin) {
       const originHost = new URL(origin).host;
       if (originHost === expectedHost) return true;
