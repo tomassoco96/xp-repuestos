@@ -3,12 +3,22 @@ import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/ProductCard.astro';
 import CategoryCard from '@/components/CategoryCard.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
-import { categories, products } from '@/lib/products';
+import { categories, products, getFeaturedProducts } from '@/lib/products';
 
 export const prerender = true;
+
+const PREVIEW_COUNT = 36;
+const featured = getFeaturedProducts(8);
+const featuredSlugs = new Set(featured.map((p) => p.slug));
+const otherProducts = products
+  .filter((p) => !featuredSlugs.has(p.slug))
+  .slice(0, PREVIEW_COUNT - featured.length);
 ---
 
-<Layout title="Tienda" description="Catálogo completo de XP Repuestos. Repuestos y accesorios para motos en Argentina.">
+<Layout
+  title="Tienda"
+  description="Catálogo completo de XP Repuestos. Repuestos y accesorios para motos en Argentina."
+>
   <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Tienda' }]} />
 
   <section class="container-x">
@@ -18,29 +28,56 @@ export const prerender = true;
         Catálogo<br /><span class="accent-italic text-[color:var(--color-rust)]">completo.</span>
       </h1>
       <p class="mt-6 max-w-xl text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
-        {products.length} productos cargados. Filtrá por categoría o navegá toda la lista. Si buscás algo que no aparece, escribinos por WhatsApp con el modelo de tu moto y lo conseguimos.
+        <strong>{products.length} productos</strong> cargados. Filtrá por categoría para encontrar lo que buscás. Si no aparece, escribinos por WhatsApp con el modelo de tu moto y lo conseguimos.
       </p>
     </div>
   </section>
 
   <section class="container-x mt-16 reveal">
-    <h2 class="font-display uppercase font-extrabold text-xl mb-4 flex items-center gap-3">
+    <h2 class="font-display uppercase font-extrabold text-2xl mb-6 flex items-center gap-3">
       <span class="inline-block w-8 h-px bg-[color:var(--color-rust)]"></span>
-      Categorías
+      Filtrá por categoría
     </h2>
     <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3 reveal-stagger">
       {categories.map((c) => <CategoryCard category={c} />)}
     </div>
   </section>
 
-  <section class="container-x mt-20 mb-20">
+  <section class="container-x mt-20">
     <div class="flex items-end justify-between border-b-2 border-[color:var(--color-ink)] pb-3 mb-8 reveal">
-      <h2 class="font-display uppercase font-extrabold text-2xl">Todos los productos</h2>
-      <span class="text-sm text-[color:var(--color-steel)] tabular">{products.length} productos</span>
+      <h2 class="font-display uppercase font-extrabold text-2xl">Top ventas</h2>
+      <span class="text-sm text-[color:var(--color-steel)]">los más buscados</span>
     </div>
 
     <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
-      {products.map((p, i) => <ProductCard product={p} index={i} />)}
+      {featured.map((p, i) => <ProductCard product={p} index={i} />)}
+    </div>
+  </section>
+
+  <section class="container-x mt-16 mb-20">
+    <div class="flex items-end justify-between border-b-2 border-[color:var(--color-ink)] pb-3 mb-8 reveal">
+      <h2 class="font-display uppercase font-extrabold text-2xl">Más productos</h2>
+      <span class="text-sm text-[color:var(--color-steel)] tabular">{otherProducts.length} de {products.length - featured.length}</span>
+    </div>
+
+    <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      {otherProducts.map((p, i) => <ProductCard product={p} index={i + featured.length} />)}
+    </div>
+
+    <div class="mt-12 border border-[color:var(--color-ink)] bg-[color:var(--color-ink)] text-[color:var(--color-paper)] p-8 text-center">
+      <h3 class="font-display uppercase font-black text-2xl md:text-3xl">
+        ¿Buscás algo específico?
+      </h3>
+      <p class="mt-3 text-sm text-[color:var(--color-paper)]/75 max-w-xl mx-auto">
+        Tenemos {products.length} productos cargados. Filtrá por una de las {categories.length} categorías para encontrarlo más rápido.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        {categories.map((c) => (
+          <a href={`/tienda/${c.slug}`} class="btn btn-primary !px-4 !py-2 !text-xs">
+            {c.nombre}
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 </Layout>

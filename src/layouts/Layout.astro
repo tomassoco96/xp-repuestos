@@ -14,6 +14,7 @@ interface Props {
   canonical?: string;
   bodyClass?: string;
   schema?: object | object[];
+  noindex?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   canonical,
   bodyClass = '',
   schema,
+  noindex = false,
 } = Astro.props;
 
 const fullTitle = title
@@ -47,6 +49,7 @@ const schemaJson = Array.isArray(schema) ? schema : schema ? [schema] : [];
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

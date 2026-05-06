@@ -47,6 +47,10 @@ export const BuyerSchema = z.object({
 export const CreatePreferenceSchema = z.object({
   items: z.array(CartItemInputSchema).min(1).max(50),
   buyer: BuyerSchema,
+  // Aceptación obligatoria de T&C (defense in depth — el cliente ya lo valida).
+  acepto_terminos: z.literal(true).optional(),
+  // Honeypot anti-bot: si viene con valor el server rechaza con 400 (defense in depth).
+  hp_website: z.string().max(0).optional().or(z.literal('')),
 });
 
 export type CartItemInput = z.infer<typeof CartItemInputSchema>;

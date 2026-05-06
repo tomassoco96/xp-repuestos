@@ -69,6 +69,23 @@ const year = new Date().getFullYear();
         <li><a href="/politicas/devoluciones" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Devoluciones</a></li>
         <li><a href="/politicas/terminos" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Términos y condiciones</a></li>
       </ul>
+
+      <h3 class="mt-6 text-xs font-display uppercase tracking-[0.22em] text-[color:var(--color-rust)] font-bold">Defensa del consumidor</h3>
+      <ul class="mt-4 space-y-2">
+        <li>
+          <a href="/arrepentimiento" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Botón de arrepentimiento</a>
+        </li>
+        <li>
+          <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">
+            Defensa al Consumidor ↗
+          </a>
+        </li>
+        <li>
+          <a href="https://www.argentina.gob.ar/aaip/datospersonales" target="_blank" rel="noopener" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">
+            Datos personales (Ley 25.326) ↗
+          </a>
+        </li>
+      </ul>
     </div>
 
     <div>
@@ -100,9 +117,19 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="border-t border-white/10 relative">
-    <div class="container-x py-5 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-[color:var(--color-paper)]/60">
-      <p>© {year} {siteData.nombre}. Todos los derechos reservados.</p>
-      <p class="flex items-center gap-2 flex-wrap">
+    <div class="container-x py-5 grid gap-3 md:grid-cols-2 text-xs text-[color:var(--color-paper)]/60">
+      <div>
+        <p>© {year} {siteData.nombre}. Todos los derechos reservados.</p>
+        {(siteData.fiscal?.razon_social || siteData.fiscal?.cuit) && (
+          <p class="mt-1 text-[10px] text-[color:var(--color-paper)]/45">
+            {siteData.fiscal.razon_social && <span>{siteData.fiscal.razon_social}</span>}
+            {siteData.fiscal.razon_social && siteData.fiscal.cuit && <span> · </span>}
+            {siteData.fiscal.cuit && <span>CUIT {siteData.fiscal.cuit}</span>}
+            {siteData.fiscal.condicion_iva && <span> · {siteData.fiscal.condicion_iva}</span>}
+          </p>
+        )}
+      </div>
+      <p class="flex items-center gap-2 flex-wrap md:justify-end">
         <span>Aceptamos:</span>
         {siteData.metodos_pago.map((m) => <span class="rounded border border-white/15 px-1.5 py-0.5">{m}</span>)}
       </p>

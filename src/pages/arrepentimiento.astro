@@ -1,0 +1,91 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import siteData from '@/data/site.json';
+import { buildWhatsAppLink } from '@/lib/format';
+
+export const prerender = true;
+
+const wa = buildWhatsAppLink(
+  siteData.whatsapp,
+  'Hola! Quiero ejercer mi derecho de arrepentimiento (Art. 1110 CCyC) sobre mi compra. Mi número de pedido es: ',
+);
+---
+
+<Layout
+  title="Botón de arrepentimiento"
+  description="Cómo ejercer tu derecho de arrepentimiento (Art. 1110 del Código Civil y Comercial) en compras a XP Repuestos."
+>
+  <Breadcrumbs items={[
+    { label: 'Inicio', href: '/' },
+    { label: 'Botón de arrepentimiento' },
+  ]} />
+
+  <section class="container-x mt-4 mb-20 max-w-3xl mx-auto">
+    <div class="border-t-2 border-[color:var(--color-ink)] pt-8 reveal">
+      <span class="label-eyebrow">Defensa del consumidor</span>
+      <h1 class="mt-4 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9]">
+        Botón de<br />
+        <span class="accent-italic text-[color:var(--color-rust)]">arrepentimiento.</span>
+      </h1>
+      <p class="mt-6 text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+        Según el <strong>Artículo 1110 del Código Civil y Comercial</strong> y la <strong>Ley 24.240 de Defensa del Consumidor</strong>, tenés derecho a revocar tu compra dentro de los <strong>10 días corridos</strong> contados desde la recepción del producto, sin necesidad de expresar causa.
+      </p>
+    </div>
+
+    <div class="mt-10 prose-policy" style="max-width:none;">
+      <h2 style="font-family: var(--xp-font-display, 'Saira Condensed'); text-transform: uppercase; font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent); padding-bottom: 0.5rem;">
+        ¿Cómo ejerzo mi derecho?
+      </h2>
+      <ol style="list-style: decimal; padding-left: 1.25rem; line-height: 1.65; margin-bottom: 1rem;">
+        <li>Comunicate por cualquiera de los canales abajo dentro de los 10 días corridos de recibir el producto.</li>
+        <li>Indicá tu número de pedido y el motivo (no es obligatorio justificar).</li>
+        <li>El producto debe estar sin uso, en su empaque original.</li>
+        <li>Coordinamos retiro o devolución del producto.</li>
+        <li>Una vez recibido y verificado, te reintegramos el importe abonado dentro de los 5 días hábiles. El costo del envío de devolución corre por nuestra cuenta cuando el cliente ejerce este derecho.</li>
+      </ol>
+
+      <h2 style="font-family: var(--xp-font-display, 'Saira Condensed'); text-transform: uppercase; font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent); padding-bottom: 0.5rem;">
+        Canales para ejercer arrepentimiento
+      </h2>
+      <ul style="list-style: disc; padding-left: 1.25rem; line-height: 1.8;">
+        <li><strong>WhatsApp:</strong> <a href={wa} target="_blank" rel="noopener" style="color: var(--color-rust); text-decoration: underline;">{siteData.telefono}</a></li>
+        <li><strong>Email:</strong> <a href={`mailto:${siteData.email}?subject=${encodeURIComponent('Arrepentimiento — Art. 1110 CCyC')}`} style="color: var(--color-rust); text-decoration: underline;">{siteData.email}</a></li>
+        <li><strong>Local físico:</strong> {siteData.direccion.calle}, {siteData.direccion.ciudad}</li>
+      </ul>
+
+      <h2 style="font-family: var(--xp-font-display, 'Saira Condensed'); text-transform: uppercase; font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent); padding-bottom: 0.5rem;">
+        Excepciones
+      </h2>
+      <p>El derecho de arrepentimiento no aplica para productos personalizados, hechos a medida o que por su naturaleza no admiten devolución (Art. 1116 CCyC). Para el catálogo de XP Repuestos esto típicamente NO aplica salvo encargues especiales pre-acordados.</p>
+
+      <h2 style="font-family: var(--xp-font-display, 'Saira Condensed'); text-transform: uppercase; font-size: 1.5rem; font-weight: 800; margin-top: 2.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent); padding-bottom: 0.5rem;">
+        Más información oficial
+      </h2>
+      <ul style="list-style: disc; padding-left: 1.25rem; line-height: 1.8;">
+        <li>
+          <a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener" style="color: var(--color-rust); text-decoration: underline;">
+            Defensa al Consumidor — Formulario oficial (argentina.gob.ar)
+          </a>
+        </li>
+        <li>
+          <a href="https://www.argentina.gob.ar/aaip/datospersonales" target="_blank" rel="noopener" style="color: var(--color-rust); text-decoration: underline;">
+            Datos Personales (Ley 25.326) — AAIP
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="mt-12 flex flex-wrap gap-3">
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-wa">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+        </svg>
+        Ejercer arrepentimiento por WhatsApp
+      </a>
+      <a href="/politicas/devoluciones" class="btn btn-ghost">
+        Ver política completa de devoluciones
+      </a>
+    </div>
+  </section>
+</Layout>

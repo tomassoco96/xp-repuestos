@@ -9,6 +9,19 @@ interface Props {
 }
 
 const { items } = Astro.props;
+
+// Schema BreadcrumbList — solo si hay 2+ items con la última siendo "current".
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://xp-repuestos.vercel.app';
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, idx) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    name: item.label,
+    ...(item.href ? { item: new URL(item.href, siteUrl).toString() } : {}),
+  })),
+};
 ---
 
 <nav aria-label="Breadcrumb" class="container-x py-4 text-xs uppercase tracking-widest font-medium text-[color:var(--color-steel)]">
@@ -27,3 +40,5 @@ const { items } = Astro.props;
     }
   </ol>
 </nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>

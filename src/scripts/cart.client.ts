@@ -406,6 +406,28 @@ async function handleCheckoutSubmit(form: HTMLFormElement): Promise<void> {
   }
 
   const data = new FormData(form);
+
+  // Honeypot anti-bot: si el campo invisible viene con valor, abortamos sin
+  // siquiera llamar al endpoint. El usuario humano nunca lo llena.
+  const honeypot = String(data.get('hp_website') ?? '');
+  if (honeypot.trim() !== '') {
+    // Devolvemos un OK fake para no dar pistas al bot.
+    if (errorEl) {
+      errorEl.textContent = 'Procesando...';
+      errorEl.classList.remove('hidden');
+    }
+    return;
+  }
+
+  // Aceptación de términos.
+  if (!data.get('acepto_terminos')) {
+    if (errorEl) {
+      errorEl.textContent = 'Tenés que aceptar los términos y condiciones para continuar.';
+      errorEl.classList.remove('hidden');
+    }
+    return;
+  }
+
   const buyer = {
     nombre: String(data.get('nombre') ?? ''),
     apellido: String(data.get('apellido') ?? ''),
@@ -437,7 +459,12 @@ async function handleCheckoutSubmit(form: HTMLFormElement): Promise<void> {
     const res = await fetch('/api/checkout/create-preference', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, buyer }),
+      body: JSON.stringify({
+        items,
+        buyer,
+        acepto_terminos: true,
+        hp_website: '',
+      }),
     });
 
     let json: any = {};

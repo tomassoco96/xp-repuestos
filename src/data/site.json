@@ -21,6 +21,11 @@
       "url": "https://instagram.com/xp.repuestos"
     }
   },
+  "fiscal": {
+    "razon_social": "",
+    "cuit": "",
+    "condicion_iva": ""
+  },
   "metodos_pago": ["Visa", "Mastercard", "American Express", "Diners Club", "Mercado Pago", "Transferencia"],
   "envio": {
     "destacado": "Envío gratis en compras superiores a $80.000",

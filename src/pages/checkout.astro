@@ -5,7 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 export const prerender = true;
 ---
 
-<Layout title="Checkout" description="Finalizá tu compra en XP Repuestos.">
+<Layout title="Checkout" description="Finalizá tu compra en XP Repuestos." noindex={true}>
   <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Carrito', href: '/carrito' }, { label: 'Checkout' }]} />
 
   <section class="container-x">
@@ -83,6 +83,27 @@ export const prerender = true;
             </label>
           </div>
         </fieldset>
+
+        <fieldset class="border border-[color:var(--color-line)] bg-[color:var(--color-bone)] p-6">
+          <legend class="px-2 font-display uppercase text-sm font-bold tracking-wider">Aceptación</legend>
+          <label class="flex items-start gap-3 mt-4 cursor-pointer">
+            <input
+              type="checkbox"
+              name="acepto_terminos"
+              required
+              class="mt-1 size-5 accent-[color:var(--color-rust)] shrink-0"
+            />
+            <span class="text-sm leading-relaxed">
+              Acepto los <a href="/politicas/terminos" target="_blank" class="underline underline-offset-2 hover:text-[color:var(--color-rust)] font-bold">términos y condiciones</a>, la <a href="/politicas/devoluciones" target="_blank" class="underline underline-offset-2 hover:text-[color:var(--color-rust)] font-bold">política de devoluciones</a> y la <a href="/politicas/envios" target="_blank" class="underline underline-offset-2 hover:text-[color:var(--color-rust)] font-bold">política de envíos</a>. *
+            </span>
+          </label>
+        </fieldset>
+
+        <!-- Honeypot anti-bot: invisible para humanos, los bots lo llenan. Server rechaza si viene con valor. -->
+        <div aria-hidden="true" style="position:absolute;left:-9999px;width:0;height:0;overflow:hidden;">
+          <label for="hp_website">No completar este campo</label>
+          <input type="text" id="hp_website" name="hp_website" tabindex="-1" autocomplete="off" />
+        </div>
 
         <p data-xp-checkout-error class="hidden text-sm bg-[color:var(--color-rust-soft)] border border-[color:var(--color-rust)]/30 text-[color:var(--color-ink)] p-4 leading-relaxed"></p>
       </div>
