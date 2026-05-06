@@ -139,3 +139,52 @@ export async function sendOrderEmails(payment: MpPayment): Promise<void> {
     }
   }
 }
+
+/**
+ * Email al cliente cuando el pago se rechaza o cancela.
+ * Útil sobre todo cuando paga con Rapipago/PagoFácil y no acredita la boleta.
+ */
+export async function sendPaymentFailedEmail(payment: MpPayment): Promise<void> {
+  const apiKey = import.meta.env.RESEND_API_KEY;
+  const from = import.meta.env.EMAIL_FROM;
+
+  if (!apiKey || !from) {
+    console.log('emails_skipped: RESEND_API_KEY o EMAIL_FROM no configurados');
+    return;
+  }
+
+  const customerEmail = payment.payer?.email;
+  if (!customerEmail) return;
+
+  const resend = new Resend(apiKey);
+  const customerName = `${payment.payer?.first_name ?? ''} ${payment.payer?.last_name ?? ''}`.trim() || 'cliente';
+  const refStr = escape(payment.external_reference);
+  const statusLabel = payment.status === 'cancelled' ? 'cancelado' : 'rechazado';
+
+  const html = `
+    <div style="font-family:system-ui,-apple-system,Segoe UI,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#1D1D1B;">
+      <div style="border-bottom:3px solid #E20613;padding-bottom:16px;margin-bottom:24px;">
+        <h1 style="margin:0;font-size:24px;text-transform:uppercase;letter-spacing:-0.01em;">Tu pago no se completó</h1>
+      </div>
+      <p>Hola ${escape(customerName)}, te escribimos para avisarte que el pago de tu pedido en <strong>XP Repuestos</strong> figura como <strong>${escape(statusLabel)}</strong> y no llegó a acreditarse.</p>
+      <p>Si te equivocaste o quedó vencida una boleta de pago, podés volver a la web y reintentar la compra. Tu carrito sigue armado en el navegador (si no lo borraste).</p>
+      <p style="margin-top:32px;">
+        <a href="https://xp-repuestos.vercel.app/checkout" style="background:#E20613;color:white;padding:12px 24px;text-decoration:none;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;font-size:14px;display:inline-block;">Reintentar compra</a>
+      </p>
+      <p style="margin-top:32px;">¿Necesitás ayuda? Escribinos por WhatsApp al <a href="https://wa.me/5491123929823">+54 9 11 2392-9823</a>.</p>
+      <p style="margin-top:24px;font-size:12px;color:#666;">Referencia: ${refStr}<br/>ID de pago: ${escape(payment.id)}</p>
+      <p>—<br/>El equipo de XP Repuestos</p>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from,
+      to: customerEmail,
+      subject: `Tu pago en XP Repuestos no se completó`,
+      html,
+    });
+  } catch (err) {
+    console.error('email_failed_payment_failed', { err: String(err) });
+  }
+}

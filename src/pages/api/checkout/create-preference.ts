@@ -24,6 +24,7 @@ import {
   isSameOrigin,
   generateExternalReference,
   safeString,
+  redactSecrets,
 } from '@/lib/security';
 
 export const prerender = false;
@@ -36,9 +37,10 @@ function json(data: unknown, status = 200, headers: Record<string, string> = {})
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  // 1. Rate limit per IP.
+  // 1. Rate limit per IP. 5/min es suficiente para usuarios reales y reduce
+  //    abuse desde una sola IP (security review SR MEDIUM-1).
   const ip = getClientIp(request);
-  const limit = rateLimit(ip, { max: 10, windowMs: 60_000 });
+  const limit = rateLimit(ip, { max: 5, windowMs: 60_000 });
   if (!limit.ok) {
     return json({ error: 'Demasiados intentos. Probá en un minuto.' }, 429, {
       'Retry-After': String(limit.retryAfter),
@@ -179,10 +181,10 @@ export const POST: APIRoute = async ({ request }) => {
       externalReference: externalRef,
     });
   } catch (err) {
-    // No exponer detalles del error al cliente.
+    // No exponer detalles del error al cliente. Redactar tokens del log.
     console.error('preference_create_failed', {
       ref: externalRef,
-      err: err instanceof Error ? err.message : String(err),
+      err: redactSecrets(err instanceof Error ? err.message : err),
     });
     return json(
       { error: 'No pudimos iniciar el pago. Intentá de nuevo en un momento.' },

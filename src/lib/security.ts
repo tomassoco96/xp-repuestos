@@ -177,5 +177,23 @@ export function generateExternalReference(): string {
 
 export function safeString(value: unknown, max = 200): string {
   if (typeof value !== 'string') return '';
-  return value.trim().slice(0, max);
+  return value
+    .replace(/[\x00-\x1F\x7F]/g, '') // strip control chars
+    .normalize('NFC') // unicode canonical
+    .trim()
+    .slice(0, max);
+}
+
+/**
+ * Redacta access tokens y API keys conocidos en strings antes de loguear.
+ * No es bulletproof — defensa en profundidad por si el SDK de MP cambia el
+ * formato de los errores y filtra el token en algún campo nuevo.
+ */
+export function redactSecrets(input: unknown): string {
+  return String(input ?? '')
+    .replace(/APP_USR-[A-Za-z0-9-]{20,}/g, '[ACCESS_TOKEN_REDACTED]')
+    .replace(/TEST-[A-Za-z0-9-]{20,}/g, '[ACCESS_TOKEN_REDACTED]')
+    .replace(/re_[A-Za-z0-9_-]{20,}/g, '[RESEND_KEY_REDACTED]')
+    .replace(/Bearer\s+[A-Za-z0-9._-]{20,}/g, 'Bearer [REDACTED]')
+    .slice(0, 500);
 }

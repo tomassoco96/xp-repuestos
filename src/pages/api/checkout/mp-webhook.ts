@@ -15,8 +15,8 @@
 
 import type { APIRoute } from 'astro';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
-import { verifyMpWebhook, markPaymentSeen } from '@/lib/security';
-import { sendOrderEmails } from '@/lib/emails';
+import { verifyMpWebhook, markPaymentSeen, redactSecrets } from '@/lib/security';
+import { sendOrderEmails, sendPaymentFailedEmail } from '@/lib/emails';
 
 export const prerender = false;
 
@@ -103,24 +103,34 @@ export const POST: APIRoute = async ({ request }) => {
         await sendOrderEmails(payment);
       } catch (mailErr) {
         console.error('emails_threw', {
-          err: mailErr instanceof Error ? mailErr.message : String(mailErr),
+          err: redactSecrets(mailErr instanceof Error ? mailErr.message : mailErr),
+        });
+      }
+    } else if (status === 'rejected' || status === 'cancelled') {
+      // Avisar al cliente que el pago no se acreditó (SR MEDIUM-2).
+      // Especialmente útil si pagó con Rapipago y no llegó a tiempo.
+      try {
+        await sendPaymentFailedEmail(payment);
+      } catch (mailErr) {
+        console.error('failed_email_threw', {
+          err: redactSecrets(mailErr instanceof Error ? mailErr.message : mailErr),
         });
       }
     }
 
-    // Otros status (rejected/cancelled/refunded) los logueamos y reaccionamos a futuro.
     return new Response('ok', { status: 200 });
   } catch (err) {
     // Si la consulta a MP falla, devolvemos 500 para que MP reintente.
     console.error('mp_webhook_lookup_failed', {
       payment_id: dataId,
-      err: err instanceof Error ? err.message : String(err),
+      err: redactSecrets(err instanceof Error ? err.message : err),
     });
     return new Response('error', { status: 500 });
   }
 };
 
-// MP puede enviar GET de prueba al guardar la URL en el panel.
+// MP puede enviar GET de prueba al guardar la URL en el panel — devolvemos
+// 200 sin body para no exponer información (SR LOW-2).
 export const GET: APIRoute = async () => {
-  return new Response('mp-webhook ok', { status: 200 });
+  return new Response(null, { status: 200 });
 };
