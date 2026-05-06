@@ -98,6 +98,9 @@ const schemaJson = Array.isArray(schema) ? schema : schema ? [schema] : [];
     <CartDrawer />
 
     <script>
+      // Cart runtime — único entrypoint del carrito client-side.
+      import '@/scripts/cart.client';
+
       // Scroll reveal observer
       const initReveal = () => {
         const els = document.querySelectorAll('.reveal, .reveal-stagger');

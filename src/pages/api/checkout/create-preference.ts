@@ -77,9 +77,26 @@ export const POST: APIRoute = async ({ request }) => {
   // 6. Validar configuración server.
   const accessToken = import.meta.env.MP_ACCESS_TOKEN;
   if (!accessToken) {
-    console.error('create-preference: MP_ACCESS_TOKEN no configurado');
+    // Modo demo: el resto de la pasarela está armado pero no hay credenciales
+    // todavía. Devolvemos una respuesta clara para que el frontend muestre un
+    // mensaje útil en lugar de un error rojo.
+    console.warn('create-preference: MP_ACCESS_TOKEN no configurado — modo demo');
     return json(
-      { error: 'Pago no disponible temporalmente. Intentá más tarde.' },
+      {
+        demo: true,
+        error:
+          'La pasarela todavía está en modo demo. Cuando se carguen las credenciales de Mercado Pago en Vercel, este endpoint redirige al cliente al checkout real.',
+        cartPreview: {
+          items: cart.items.map((it) => ({
+            slug: it.product.slug,
+            nombre: it.product.nombre,
+            qty: it.qty,
+            unitPrice: it.unitPrice,
+            subtotal: it.subtotal,
+          })),
+          total: cart.total,
+        },
+      },
       503,
     );
   }

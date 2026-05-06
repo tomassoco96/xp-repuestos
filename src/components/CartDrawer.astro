@@ -1,11 +1,11 @@
 ---
 /**
  * Drawer lateral con el contenido del carrito.
- * Hidratado client-side: lee del store, renderea items y permite editar.
+ * El render de items lo hace cart.client.ts.
  */
 ---
 
-<div id="xp-cart-overlay" class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
+<div id="xp-cart-overlay" data-xp-cart-close class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
 
 <aside
   id="xp-cart-drawer"
@@ -19,7 +19,7 @@
     <h2 class="font-display uppercase font-black text-2xl">Tu carrito</h2>
     <button
       type="button"
-      id="xp-cart-close"
+      data-xp-cart-close
       class="size-9 inline-flex items-center justify-center rounded-md border border-[color:var(--color-line)] hover:border-[color:var(--color-ink)] hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)] transition"
       aria-label="Cerrar carrito"
     >
@@ -29,7 +29,7 @@
     </button>
   </header>
 
-  <div id="xp-cart-body" class="flex-1 overflow-y-auto p-5">
+  <div class="flex-1 overflow-y-auto p-5">
     <p id="xp-cart-empty" class="text-center text-sm text-[color:var(--color-steel)] py-12">
       Todavía no agregaste productos.
     </p>
@@ -58,120 +58,10 @@
   #xp-cart-overlay.is-open { opacity: 1; pointer-events: auto; }
   #xp-cart-drawer.is-open { transform: translateX(0); }
   body.xp-no-scroll { overflow: hidden; }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 </style>
-
-<script>
-  import { $cart, $cartOpen, closeCart, updateQty, removeFromCart } from '@/lib/cart-store';
-  import { products } from '@/lib/products';
-  import { formatPrice } from '@/lib/format';
-
-  const drawer = document.getElementById('xp-cart-drawer');
-  const overlay = document.getElementById('xp-cart-overlay');
-  const closeBtn = document.getElementById('xp-cart-close');
-  const empty = document.getElementById('xp-cart-empty');
-  const list = document.getElementById('xp-cart-items') as HTMLUListElement | null;
-  const footer = document.getElementById('xp-cart-footer');
-  const subtotalEl = document.getElementById('xp-cart-subtotal');
-
-  function open() {
-    drawer?.classList.add('is-open');
-    overlay?.classList.add('is-open');
-    document.body.classList.add('xp-no-scroll');
-    drawer?.setAttribute('aria-hidden', 'false');
-    drawer?.focus();
-  }
-  function close() {
-    drawer?.classList.remove('is-open');
-    overlay?.classList.remove('is-open');
-    document.body.classList.remove('xp-no-scroll');
-    drawer?.setAttribute('aria-hidden', 'true');
-    closeCart();
-  }
-
-  $cartOpen.subscribe((isOpen) => {
-    if (isOpen) open();
-  });
-
-  closeBtn?.addEventListener('click', close);
-  overlay?.addEventListener('click', close);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') close();
-  });
-
-  function escapeHtml(s: string): string {
-    return s
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  function render(items: { slug: string; qty: number }[]) {
-    if (!list || !empty || !footer || !subtotalEl) return;
-
-    if (items.length === 0) {
-      empty.classList.remove('hidden');
-      list.classList.add('hidden');
-      footer.classList.add('hidden');
-      return;
-    }
-
-    empty.classList.add('hidden');
-    list.classList.remove('hidden');
-    footer.classList.remove('hidden');
-
-    let subtotal = 0;
-    list.innerHTML = items
-      .map((it) => {
-        const p = products.find((x) => x.slug === it.slug);
-        if (!p) return '';
-        const sub = p.precio * it.qty;
-        subtotal += sub;
-        return `
-          <li class="flex gap-3 border-b border-[color:var(--color-line)] pb-4">
-            <div class="size-20 shrink-0 product-img">
-              <img src="${escapeHtml(p.imagen)}" alt="" class="size-full object-contain p-1.5" loading="lazy" />
-            </div>
-            <div class="flex-1 min-w-0 flex flex-col gap-1">
-              <p class="text-[10px] uppercase tracking-widest text-[color:var(--color-rust)] font-bold">${escapeHtml(p.marca)}</p>
-              <p class="font-display uppercase font-extrabold text-sm leading-tight line-clamp-2">${escapeHtml(p.nombre)}</p>
-              <div class="mt-auto flex items-center justify-between gap-2">
-                <div class="inline-flex items-center border border-[color:var(--color-line)] rounded">
-                  <button type="button" data-qty="-" data-slug="${escapeHtml(p.slug)}" class="size-7 inline-flex items-center justify-center hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)]" aria-label="Restar uno">−</button>
-                  <span class="min-w-[28px] text-center text-sm tabular font-bold">${it.qty}</span>
-                  <button type="button" data-qty="+" data-slug="${escapeHtml(p.slug)}" class="size-7 inline-flex items-center justify-center hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)]" aria-label="Sumar uno">+</button>
-                </div>
-                <p class="font-display font-black tabular text-base">${formatPrice(sub)}</p>
-              </div>
-              <button type="button" data-remove="${escapeHtml(p.slug)}" class="text-xs text-[color:var(--color-steel)] hover:text-[color:var(--color-rust)] underline underline-offset-2 self-start">Quitar</button>
-            </div>
-          </li>
-        `;
-      })
-      .join('');
-
-    subtotalEl.textContent = formatPrice(subtotal);
-  }
-
-  list?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const qtyBtn = target.closest<HTMLButtonElement>('[data-qty]');
-    const removeBtn = target.closest<HTMLButtonElement>('[data-remove]');
-    if (qtyBtn) {
-      const slug = qtyBtn.dataset.slug ?? '';
-      const dir = qtyBtn.dataset.qty;
-      const current = $cart.get().find((i) => i.slug === slug);
-      if (!current) return;
-      const next = dir === '+' ? current.qty + 1 : current.qty - 1;
-      updateQty(slug, next);
-    }
-    if (removeBtn) {
-      const slug = removeBtn.dataset.remove ?? '';
-      removeFromCart(slug);
-    }
-  });
-
-  render($cart.get());
-  $cart.subscribe(render);
-</script>

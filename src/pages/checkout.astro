@@ -21,12 +21,12 @@ export const prerender = true;
   </section>
 
   <section class="container-x mt-12 mb-20">
-    <div id="xp-checkout-empty" class="text-center text-[color:var(--color-steel)] py-12">
+    <div data-xp-checkout-empty class="text-center text-[color:var(--color-steel)] py-12">
       Tu carrito está vacío. <a href="/tienda" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">Volver al catálogo</a>.
     </div>
 
     <form
-      id="xp-checkout-form"
+      data-xp-checkout-form
       class="grid lg:grid-cols-12 gap-10 hidden"
       autocomplete="on"
       novalidate
@@ -84,7 +84,7 @@ export const prerender = true;
           </div>
         </fieldset>
 
-        <p id="xp-checkout-error" class="hidden text-sm text-[color:var(--color-rust)] font-bold"></p>
+        <p data-xp-checkout-error class="hidden text-sm bg-[color:var(--color-rust-soft)] border border-[color:var(--color-rust)]/30 text-[color:var(--color-ink)] p-4 leading-relaxed"></p>
       </div>
 
       <aside class="lg:col-span-5">
@@ -94,12 +94,12 @@ export const prerender = true;
             Resumen
           </h2>
 
-          <ul id="xp-checkout-items" class="space-y-3 mb-4 max-h-80 overflow-y-auto"></ul>
+          <ul data-xp-checkout-items class="space-y-3 mb-4 max-h-80 overflow-y-auto"></ul>
 
           <div class="border-t border-[color:var(--color-line)] pt-4 space-y-1">
             <div class="flex justify-between text-sm">
               <span>Subtotal</span>
-              <span id="xp-checkout-subtotal" class="font-display font-black tabular">$0</span>
+              <span data-xp-checkout-subtotal class="font-display font-black tabular">$0</span>
             </div>
             <div class="flex justify-between text-sm">
               <span>Envío</span>
@@ -107,13 +107,12 @@ export const prerender = true;
             </div>
             <div class="flex justify-between text-base mt-3 border-t border-[color:var(--color-line)] pt-3">
               <span class="font-bold">Total estimado</span>
-              <span id="xp-checkout-total" class="font-display font-black tabular text-xl">$0</span>
+              <span data-xp-checkout-total class="font-display font-black tabular text-xl">$0</span>
             </div>
           </div>
 
           <button
             type="submit"
-            id="xp-checkout-submit"
             class="btn btn-primary w-full mt-6 text-base"
           >
             Pagar con Mercado Pago
@@ -128,120 +127,12 @@ export const prerender = true;
     </form>
   </section>
 
-  <script>
-    import { $cart } from '@/lib/cart-store';
-    import { products } from '@/lib/products';
-    import { formatPrice } from '@/lib/format';
-
-    const empty = document.getElementById('xp-checkout-empty');
-    const form = document.getElementById('xp-checkout-form') as HTMLFormElement | null;
-    const itemsEl = document.getElementById('xp-checkout-items');
-    const subtotalEl = document.getElementById('xp-checkout-subtotal');
-    const totalEl = document.getElementById('xp-checkout-total');
-    const submitBtn = document.getElementById('xp-checkout-submit') as HTMLButtonElement | null;
-    const errorEl = document.getElementById('xp-checkout-error');
-
-    function escapeHtml(s: string): string {
-      return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-
-    function render(items: { slug: string; qty: number }[]) {
-      if (!form || !empty || !itemsEl || !subtotalEl || !totalEl) return;
-
-      if (items.length === 0) {
-        empty.classList.remove('hidden');
-        form.classList.add('hidden');
-        return;
-      }
-
-      empty.classList.add('hidden');
-      form.classList.remove('hidden');
-
-      let subtotal = 0;
-      itemsEl.innerHTML = items
-        .map((it) => {
-          const p = products.find((x) => x.slug === it.slug);
-          if (!p) return '';
-          const sub = p.precio * it.qty;
-          subtotal += sub;
-          return `
-            <li class="flex gap-3 text-sm">
-              <div class="size-12 shrink-0 product-img">
-                <img src="${escapeHtml(p.imagen)}" alt="" class="size-full object-contain p-1" loading="lazy" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-display uppercase font-bold text-xs leading-tight line-clamp-2">${escapeHtml(p.nombre)}</p>
-                <p class="text-xs text-[color:var(--color-steel)] mt-0.5">x${it.qty}</p>
-              </div>
-              <p class="font-display font-black tabular text-sm">${formatPrice(sub)}</p>
-            </li>
-          `;
-        })
-        .join('');
-
-      subtotalEl.textContent = formatPrice(subtotal);
-      totalEl.textContent = formatPrice(subtotal);
-    }
-
-    render($cart.get());
-    $cart.subscribe(render);
-
-    form?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!form || !errorEl || !submitBtn) return;
-      errorEl.classList.add('hidden');
-      errorEl.textContent = '';
-
-      const data = new FormData(form);
-      const buyer = {
-        nombre: String(data.get('nombre') ?? ''),
-        apellido: String(data.get('apellido') ?? ''),
-        email: String(data.get('email') ?? ''),
-        telefono: String(data.get('telefono') ?? ''),
-        dni: String(data.get('dni') ?? ''),
-        direccion: String(data.get('direccion') ?? ''),
-        ciudad: String(data.get('ciudad') ?? ''),
-        provincia: String(data.get('provincia') ?? ''),
-        codigoPostal: String(data.get('codigoPostal') ?? ''),
-        notas: String(data.get('notas') ?? ''),
-      };
-
-      const items = $cart.get();
-      if (items.length === 0) {
-        errorEl.textContent = 'Tu carrito está vacío.';
-        errorEl.classList.remove('hidden');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Procesando...';
-
-      try {
-        const res = await fetch('/api/checkout/create-preference', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items, buyer }),
-        });
-        const json = await res.json();
-
-        if (!res.ok || !json.initPoint) {
-          throw new Error(json.error ?? 'No se pudo iniciar el pago. Probá de nuevo.');
-        }
-
-        // Redirigir a Mercado Pago.
-        window.location.href = json.initPoint;
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Error inesperado.';
-        errorEl.textContent = msg;
-        errorEl.classList.remove('hidden');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Pagar con Mercado Pago';
-      }
-    });
-  </script>
+  </style>
 </Layout>

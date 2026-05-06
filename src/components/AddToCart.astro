@@ -1,7 +1,7 @@
 ---
 /**
- * Botón Agregar al carrito (versión grande).
- * Usado en la ficha de producto. Suma 1 al carrito y abre drawer.
+ * Botón "Agregar al carrito" — versión grande para fichas de producto.
+ * La acción la maneja cart.client.ts vía event delegation.
  */
 import type { Producto } from '@/lib/products';
 
@@ -15,12 +15,12 @@ const { product, variant = 'dark' } = Astro.props;
 
 <button
   type="button"
+  data-xp-add-to-cart={product.slug}
   class:list={[
     'btn',
     variant === 'primary' ? 'btn-primary' : 'btn-dark',
-    'text-base xp-add-to-cart',
+    'text-base',
   ]}
-  data-add-slug={product.slug}
 >
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="9" cy="21" r="1"></circle>
@@ -29,17 +29,3 @@ const { product, variant = 'dark' } = Astro.props;
   </svg>
   Agregar al carrito
 </button>
-
-<script>
-  import { addToCart, openCart } from '@/lib/cart-store';
-
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const btn = target.closest<HTMLButtonElement>('.xp-add-to-cart');
-    if (!btn) return;
-    const slug = btn.dataset.addSlug;
-    if (!slug) return;
-    addToCart(slug, 1);
-    openCart();
-  });
-</script>

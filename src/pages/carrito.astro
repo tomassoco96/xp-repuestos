@@ -18,19 +18,19 @@ export const prerender = true;
   </section>
 
   <section class="container-x mt-12 mb-20">
-    <p id="xp-cart-empty-page" class="text-center text-[color:var(--color-steel)] py-12">
+    <p data-xp-cart-page-empty class="text-center text-[color:var(--color-steel)] py-12">
       Todavía no agregaste productos. <a href="/tienda" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">Ir al catálogo</a>.
     </p>
 
-    <div id="xp-cart-page-content" class="grid lg:grid-cols-12 gap-10 hidden">
-      <ul id="xp-cart-page-items" class="lg:col-span-8 space-y-4"></ul>
+    <div data-xp-cart-page-content class="grid lg:grid-cols-12 gap-10 hidden">
+      <ul data-xp-cart-page-items class="lg:col-span-8 space-y-4"></ul>
 
       <aside class="lg:col-span-4">
         <div class="lg:sticky lg:top-32 border border-[color:var(--color-line)] bg-[color:var(--color-bone)] p-6">
           <h2 class="font-display uppercase font-extrabold text-xl mb-4">Resumen</h2>
           <div class="flex justify-between mb-2">
             <span class="text-sm">Subtotal</span>
-            <span id="xp-cart-page-subtotal" class="font-display font-black tabular">$0</span>
+            <span data-xp-cart-page-subtotal class="font-display font-black tabular">$0</span>
           </div>
           <div class="flex justify-between mb-4 text-xs text-[color:var(--color-steel)]">
             <span>Envío</span>
@@ -48,87 +48,12 @@ export const prerender = true;
     </div>
   </section>
 
-  <script>
-    import { $cart, updateQty, removeFromCart } from '@/lib/cart-store';
-    import { products } from '@/lib/products';
-    import { formatPrice } from '@/lib/format';
-
-    const empty = document.getElementById('xp-cart-empty-page');
-    const content = document.getElementById('xp-cart-page-content');
-    const list = document.getElementById('xp-cart-page-items') as HTMLUListElement | null;
-    const subtotalEl = document.getElementById('xp-cart-page-subtotal');
-
-    function escapeHtml(s: string): string {
-      return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-
-    function render(items: { slug: string; qty: number }[]) {
-      if (!list || !empty || !content || !subtotalEl) return;
-
-      if (items.length === 0) {
-        empty.classList.remove('hidden');
-        content.classList.add('hidden');
-        return;
-      }
-
-      empty.classList.add('hidden');
-      content.classList.remove('hidden');
-
-      let subtotal = 0;
-      list.innerHTML = items
-        .map((it) => {
-          const p = products.find((x) => x.slug === it.slug);
-          if (!p) return '';
-          const sub = p.precio * it.qty;
-          subtotal += sub;
-          return `
-            <li class="flex gap-4 border border-[color:var(--color-line)] bg-[color:var(--color-bone)] p-4">
-              <a href="/producto/${escapeHtml(p.slug)}" class="size-28 shrink-0 product-img">
-                <img src="${escapeHtml(p.imagen)}" alt="" class="size-full object-contain p-2" loading="lazy" />
-              </a>
-              <div class="flex-1 min-w-0 flex flex-col gap-2">
-                <p class="text-[10px] uppercase tracking-widest text-[color:var(--color-rust)] font-bold">${escapeHtml(p.marca)}</p>
-                <a href="/producto/${escapeHtml(p.slug)}" class="font-display uppercase font-extrabold text-base leading-tight hover:text-[color:var(--color-rust)] transition">${escapeHtml(p.nombre)}</a>
-                <div class="mt-auto flex items-center justify-between gap-2 flex-wrap">
-                  <div class="inline-flex items-center border border-[color:var(--color-line)] rounded">
-                    <button type="button" data-qty="-" data-slug="${escapeHtml(p.slug)}" class="size-8 inline-flex items-center justify-center hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)]" aria-label="Restar uno">−</button>
-                    <span class="min-w-[32px] text-center text-sm tabular font-bold">${it.qty}</span>
-                    <button type="button" data-qty="+" data-slug="${escapeHtml(p.slug)}" class="size-8 inline-flex items-center justify-center hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)]" aria-label="Sumar uno">+</button>
-                  </div>
-                  <p class="font-display font-black tabular text-lg">${formatPrice(sub)}</p>
-                  <button type="button" data-remove="${escapeHtml(p.slug)}" class="text-xs text-[color:var(--color-steel)] hover:text-[color:var(--color-rust)] underline underline-offset-2">Quitar</button>
-                </div>
-              </div>
-            </li>
-          `;
-        })
-        .join('');
-
-      subtotalEl.textContent = formatPrice(subtotal);
-    }
-
-    list?.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const qtyBtn = target.closest<HTMLButtonElement>('[data-qty]');
-      const removeBtn = target.closest<HTMLButtonElement>('[data-remove]');
-      if (qtyBtn) {
-        const slug = qtyBtn.dataset.slug ?? '';
-        const dir = qtyBtn.dataset.qty;
-        const current = $cart.get().find((i) => i.slug === slug);
-        if (!current) return;
-        updateQty(slug, dir === '+' ? current.qty + 1 : current.qty - 1);
-      }
-      if (removeBtn) {
-        removeFromCart(removeBtn.dataset.remove ?? '');
-      }
-    });
-
-    render($cart.get());
-    $cart.subscribe(render);
-  </script>
+  </style>
 </Layout>
