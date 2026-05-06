@@ -10,10 +10,10 @@ import { categories, products } from '@/lib/products';
   <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Tienda' }]} />
 
   <section class="container-x">
-    <div class="border-t border-[color:var(--color-ink)] pt-8">
+    <div class="border-t-2 border-[color:var(--color-ink)] pt-8 reveal">
       <span class="label-eyebrow">Tienda</span>
-      <h1 class="mt-3 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
-        Catálogo<br />completo
+      <h1 class="mt-4 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+        Catálogo<br /><span class="accent-italic text-[color:var(--color-rust)]">completo.</span>
       </h1>
       <p class="mt-6 max-w-xl text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
         {products.length} productos cargados. Filtrá por categoría o navegá toda la lista. Si buscás algo que no aparece, escribinos por WhatsApp con el modelo de tu moto y lo conseguimos.
@@ -21,21 +21,24 @@ import { categories, products } from '@/lib/products';
     </div>
   </section>
 
-  <section class="container-x mt-12">
-    <h2 class="font-display uppercase font-extrabold text-xl mb-4">Categorías</h2>
-    <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+  <section class="container-x mt-16 reveal">
+    <h2 class="font-display uppercase font-extrabold text-xl mb-4 flex items-center gap-3">
+      <span class="inline-block w-8 h-px bg-[color:var(--color-rust)]"></span>
+      Categorías
+    </h2>
+    <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3 reveal-stagger">
       {categories.map((c) => <CategoryCard category={c} />)}
     </div>
   </section>
 
-  <section class="container-x mt-16">
-    <div class="flex items-end justify-between border-b border-[color:var(--color-ink)] pb-3 mb-6">
+  <section class="container-x mt-20 mb-20">
+    <div class="flex items-end justify-between border-b-2 border-[color:var(--color-ink)] pb-3 mb-8 reveal">
       <h2 class="font-display uppercase font-extrabold text-2xl">Todos los productos</h2>
-      <span class="text-sm text-[color:var(--color-steel)]">{products.length} productos</span>
+      <span class="text-sm text-[color:var(--color-steel)] tabular">{products.length} productos</span>
     </div>
 
     <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
-      {products.map((p) => <ProductCard product={p} />)}
+      {products.map((p, i) => <ProductCard product={p} index={i} />)}
     </div>
   </section>
 </Layout>

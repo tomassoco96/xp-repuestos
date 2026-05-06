@@ -16,8 +16,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 <div class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] text-xs">
   <div class="container-x flex flex-wrap items-center justify-between gap-2 py-2">
     <span class="flex items-center gap-2">
-      <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-rust)]" aria-hidden="true"></span>
-      <span class="font-medium tracking-wide uppercase">{siteData.envio.destacado}</span>
+      <span class="inline-block size-1.5 rounded-full bg-[color:var(--color-rust)] pulse-ring" aria-hidden="true"></span>
+      <span class="font-semibold tracking-wide uppercase">{siteData.envio.destacado}</span>
     </span>
     <span class="hidden md:inline-block opacity-80">
       {siteData.direccion.calle}, {siteData.direccion.ciudad} · {siteData.horarios[0]}
@@ -25,11 +25,20 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
   </div>
 </div>
 
-<header class="sticky top-0 z-40 border-b border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-paper)]/80">
+<header class="sticky top-0 z-40 border-b border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-paper)]/80" transition:persist>
   <div class="container-x flex items-center justify-between gap-6 py-4">
-    <a href="/" class="flex items-center gap-2 group" aria-label="XP Repuestos · inicio">
-      <span class="inline-flex items-center justify-center size-9 bg-[color:var(--color-ink)] text-[color:var(--color-rust)] font-display font-black text-xl leading-none group-hover:bg-[color:var(--color-rust)] group-hover:text-[color:var(--color-paper)] transition">XP</span>
-      <span class="font-display text-2xl font-extrabold tracking-tight uppercase leading-none hidden sm:inline">{siteData.nombre}</span>
+    <a href="/" class="flex items-center gap-3 group" aria-label="XP Repuestos · inicio">
+      <img
+        src="/logo-xp.svg"
+        alt=""
+        width="48"
+        height="48"
+        class="size-11 transition-transform duration-500 group-hover:rotate-[24deg]"
+      />
+      <span class="font-display text-xl font-black uppercase leading-none hidden sm:flex flex-col gap-0.5">
+        <span>XP</span>
+        <span class="text-[10px] font-semibold tracking-[0.18em] text-[color:var(--color-steel)]">Repuestos</span>
+      </span>
     </a>
 
     <nav class="hidden lg:flex items-center gap-8" aria-label="Navegación principal">
@@ -39,8 +48,9 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
           return (
             <a
               href={l.href}
+              data-active={isActive ? 'true' : 'false'}
               class:list={[
-                'font-display uppercase tracking-wide text-sm font-semibold transition',
+                'nav-link font-display uppercase tracking-wide text-sm font-bold transition',
                 isActive
                   ? 'text-[color:var(--color-rust)]'
                   : 'text-[color:var(--color-ink)] hover:text-[color:var(--color-rust)]',
@@ -90,7 +100,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
           <li>
             <a
               href={l.href}
-              class="block py-2 font-display uppercase font-semibold text-base hover:text-[color:var(--color-rust)]"
+              class="block py-2 font-display uppercase font-bold text-base hover:text-[color:var(--color-rust)]"
             >
               {l.label}
             </a>
@@ -118,16 +128,17 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
   </nav>
 </header>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
+<script>
+  document.addEventListener('astro:page-load', () => {
     const toggle = document.getElementById('nav-toggle');
     const nav = document.getElementById('mobile-nav');
     if (!toggle || !nav) return;
-    toggle.addEventListener('click', () => {
+    const handle = () => {
       const isOpen = !nav.classList.contains('hidden');
       nav.classList.toggle('hidden');
       toggle.setAttribute('aria-expanded', String(!isOpen));
       toggle.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
-    });
+    };
+    toggle.addEventListener('click', handle);
   });
 </script>

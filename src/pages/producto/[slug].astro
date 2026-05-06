@@ -57,19 +57,19 @@ const schema = {
 
   <section class="container-x grid gap-10 lg:grid-cols-12 mt-4 mb-20">
     <div class="lg:col-span-7">
-      <div class="product-img aspect-square border border-[color:var(--color-ink)]/15">
+      <div class="product-img aspect-square border border-[color:var(--color-line)] overflow-hidden group" data-tilt>
         <img
           src={product.imagen}
           alt={product.nombre}
           width="900"
           height="900"
-          class="w-full h-full object-contain p-8"
+          class="w-full h-full object-contain p-8 img-zoom"
         />
       </div>
     </div>
 
-    <div class="lg:col-span-5 flex flex-col">
-      <div class="flex items-center gap-3 text-xs uppercase tracking-widest font-bold">
+    <div class="lg:col-span-5 flex flex-col reveal">
+      <div class="flex items-center gap-3 text-xs uppercase tracking-[0.2em] font-bold">
         <span class="text-[color:var(--color-rust)]">{product.marca}</span>
         {product.stock ? (
           <span class="inline-flex items-center gap-1.5 text-emerald-700">

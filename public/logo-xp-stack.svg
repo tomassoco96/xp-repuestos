@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 460" role="img" aria-label="XP Repuestos &amp; Accesorios">
+  <g>
+    <circle cx="180" cy="160" r="130" stroke="#E20613" stroke-width="22" fill="none" stroke-linecap="round" stroke-dasharray="700 110" transform="rotate(-115 180 160)"/>
+    <text x="180" y="208" text-anchor="middle" font-family="'Saira Stencil One', 'Saira Condensed', 'Impact', sans-serif" font-style="italic" font-weight="900" font-size="170" fill="#1D1D1B" letter-spacing="-6">xp</text>
+  </g>
+  <text x="180" y="380" text-anchor="middle" font-family="'Montserrat', system-ui, sans-serif" font-weight="900" font-size="44" fill="#1D1D1B" letter-spacing="0.5">REPUESTOS</text>
+  <text x="180" y="430" text-anchor="middle" font-family="'Montserrat', system-ui, sans-serif" font-weight="900" font-size="32" fill="#1D1D1B" letter-spacing="2">&amp; ACCESORIOS</text>
+</svg>

@@ -5,36 +5,43 @@ import siteData from '@/data/site.json';
 
 interface Props {
   product: Producto;
+  index?: number;
 }
 
-const { product } = Astro.props;
+const { product, index = 0 } = Astro.props;
 const wa = buildWhatsAppLink(siteData.whatsapp, buildProductWhatsAppMessage(product.nombre));
 ---
 
-<article class="group flex flex-col h-full bg-[color:var(--color-bone)] border border-[color:var(--color-ink)]/10 hover:border-[color:var(--color-ink)] transition-colors">
+<article class="group relative flex flex-col h-full bg-[color:var(--color-bone)] border border-[color:var(--color-line)] card-lift">
+  <!-- Corner accent -->
+  <span class="absolute top-0 right-0 size-0 border-t-[24px] border-r-[24px] border-t-[color:var(--color-rust)] border-r-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></span>
+
   <a href={`/producto/${product.slug}`} class="block product-img aspect-square overflow-hidden">
     <img
       src={product.imagen}
       alt={product.nombre}
-      loading="lazy"
+      loading={index < 4 ? 'eager' : 'lazy'}
       decoding="async"
       width="600"
       height="600"
-      class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+      class="w-full h-full object-contain p-4 img-zoom"
     />
   </a>
 
   <div class="flex flex-col flex-1 p-4 gap-2">
-    <div class="flex items-center justify-between gap-2 text-[10px] uppercase tracking-widest font-semibold">
+    <div class="flex items-center justify-between gap-2 text-[10px] uppercase tracking-[0.18em] font-bold">
       <span class="text-[color:var(--color-rust)]">{product.marca}</span>
       {product.stock ? (
-        <span class="text-emerald-700">En stock</span>
+        <span class="inline-flex items-center gap-1 text-emerald-700">
+          <span class="size-1.5 rounded-full bg-emerald-600 inline-block"></span>
+          En stock
+        </span>
       ) : (
         <span class="text-[color:var(--color-steel)]">Consultar</span>
       )}
     </div>
 
-    <a href={`/producto/${product.slug}`} class="font-display uppercase font-bold text-base leading-tight line-clamp-3 hover:text-[color:var(--color-rust)] transition-colors min-h-[3.5rem]">
+    <a href={`/producto/${product.slug}`} class="font-display uppercase font-extrabold text-base leading-tight line-clamp-3 hover:text-[color:var(--color-rust)] transition-colors min-h-[3.5rem]">
       {product.nombre}
     </a>
 

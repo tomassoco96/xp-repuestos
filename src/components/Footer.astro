@@ -5,32 +5,54 @@ import { categories } from '@/lib/products';
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] mt-24">
-  <div class="container-x py-16 grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+<footer class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] mt-24 relative overflow-hidden">
+  <!-- Big background watermark -->
+  <div class="absolute inset-0 pointer-events-none flex items-center justify-end opacity-[0.03]" aria-hidden="true">
+    <span class="font-display font-black text-[28rem] leading-none tracking-tighter -mr-20 select-none">XP</span>
+  </div>
+
+  <div class="container-x py-16 relative grid gap-12 md:grid-cols-2 lg:grid-cols-4">
     <div>
-      <a href="/" class="inline-flex items-center gap-2">
-        <span class="inline-flex items-center justify-center size-10 bg-[color:var(--color-rust)] text-[color:var(--color-paper)] font-display font-black text-2xl leading-none">XP</span>
-        <span class="font-display text-2xl font-extrabold uppercase">{siteData.nombre}</span>
+      <a href="/" class="inline-flex items-center gap-3 group">
+        <img src="/logo-xp-dark.svg" alt="" width="56" height="56" class="size-14" />
+        <span class="font-display text-2xl font-black uppercase leading-none">
+          {siteData.nombre}
+        </span>
       </a>
       <p class="mt-4 text-sm text-[color:var(--color-paper)]/70 max-w-xs leading-relaxed">
         {siteData.descripcion}
       </p>
+
+      <div class="mt-5 flex gap-2">
+        <a href={siteData.redes.instagram.url} target="_blank" rel="noopener" aria-label="Instagram XP Repuestos" class="inline-flex size-10 items-center justify-center rounded-md border border-white/15 hover:border-[color:var(--color-rust)] hover:bg-[color:var(--color-rust)] transition">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37Z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </a>
+        <a href={`https://wa.me/${siteData.whatsapp}`} target="_blank" rel="noopener" aria-label="WhatsApp XP Repuestos" class="inline-flex size-10 items-center justify-center rounded-md border border-white/15 hover:border-[color:var(--color-rust)] hover:bg-[color:var(--color-rust)] transition">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+          </svg>
+        </a>
+      </div>
     </div>
 
     <div>
-      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Catálogo</h3>
+      <h3 class="text-xs font-display uppercase tracking-[0.22em] text-[color:var(--color-rust)] font-bold">Catálogo</h3>
       <ul class="mt-4 space-y-2">
         {
           categories.map((c) => (
             <li>
-              <a href={`/tienda/${c.slug}`} class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">
+              <a href={`/tienda/${c.slug}`} class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">
                 {c.nombre}
               </a>
             </li>
           ))
         }
         <li>
-          <a href="/tienda" class="text-sm font-semibold text-[color:var(--color-paper)] hover:text-[color:var(--color-rust)]">
+          <a href="/tienda" class="text-sm font-bold text-[color:var(--color-paper)] hover:text-[color:var(--color-rust)]">
             Ver todos los productos →
           </a>
         </li>
@@ -38,38 +60,38 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Información</h3>
+      <h3 class="text-xs font-display uppercase tracking-[0.22em] text-[color:var(--color-rust)] font-bold">Información</h3>
       <ul class="mt-4 space-y-2">
-        <li><a href="/nuestra-historia" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Nosotros</a></li>
-        <li><a href="/mayorista" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Mayorista</a></li>
-        <li><a href="/faqs" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Preguntas frecuentes</a></li>
-        <li><a href="/politicas/envios" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Envíos</a></li>
-        <li><a href="/politicas/devoluciones" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Devoluciones</a></li>
-        <li><a href="/politicas/terminos" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-paper)]">Términos y condiciones</a></li>
+        <li><a href="/nuestra-historia" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Nosotros</a></li>
+        <li><a href="/mayorista" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Mayorista</a></li>
+        <li><a href="/faqs" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Preguntas frecuentes</a></li>
+        <li><a href="/politicas/envios" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Envíos</a></li>
+        <li><a href="/politicas/devoluciones" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Devoluciones</a></li>
+        <li><a href="/politicas/terminos" class="text-sm text-[color:var(--color-paper)]/80 hover:text-[color:var(--color-rust)] transition">Términos y condiciones</a></li>
       </ul>
     </div>
 
     <div>
-      <h3 class="text-sm font-display uppercase tracking-widest text-[color:var(--color-rust)]">Contacto</h3>
+      <h3 class="text-xs font-display uppercase tracking-[0.22em] text-[color:var(--color-rust)] font-bold">Contacto</h3>
       <ul class="mt-4 space-y-2 text-sm text-[color:var(--color-paper)]/80">
         <li>{siteData.direccion.calle}, {siteData.direccion.ciudad}</li>
         <li>
-          <a href={`mailto:${siteData.email}`} class="hover:text-[color:var(--color-paper)]">{siteData.email}</a>
+          <a href={`mailto:${siteData.email}`} class="hover:text-[color:var(--color-rust)]">{siteData.email}</a>
         </li>
         <li>
-          <a href={`https://wa.me/${siteData.whatsapp}`} class="hover:text-[color:var(--color-paper)]" target="_blank" rel="noopener">
+          <a href={`https://wa.me/${siteData.whatsapp}`} class="hover:text-[color:var(--color-rust)]" target="_blank" rel="noopener">
             WhatsApp {siteData.telefono}
           </a>
         </li>
         <li>
-          <a href={siteData.redes.instagram.url} class="hover:text-[color:var(--color-paper)]" target="_blank" rel="noopener">
+          <a href={siteData.redes.instagram.url} class="hover:text-[color:var(--color-rust)]" target="_blank" rel="noopener">
             Instagram {siteData.redes.instagram.handle}
           </a>
         </li>
       </ul>
 
       <div class="mt-4">
-        <span class="text-xs uppercase tracking-widest text-[color:var(--color-paper)]/60">Horarios</span>
+        <span class="text-[10px] uppercase tracking-[0.22em] font-bold text-[color:var(--color-paper)]/60">Horarios</span>
         <ul class="mt-1 text-xs text-[color:var(--color-paper)]/80 space-y-0.5">
           {siteData.horarios.map((h) => <li>{h}</li>)}
         </ul>
@@ -77,11 +99,11 @@ const year = new Date().getFullYear();
     </div>
   </div>
 
-  <div class="border-t border-white/10">
+  <div class="border-t border-white/10 relative">
     <div class="container-x py-5 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-[color:var(--color-paper)]/60">
       <p>© {year} {siteData.nombre}. Todos los derechos reservados.</p>
-      <p class="flex items-center gap-2">
-        Aceptamos
+      <p class="flex items-center gap-2 flex-wrap">
+        <span>Aceptamos:</span>
         {siteData.metodos_pago.map((m) => <span class="rounded border border-white/15 px-1.5 py-0.5">{m}</span>)}
       </p>
     </div>

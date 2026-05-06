@@ -4,6 +4,7 @@ import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
 import WhatsAppFab from '@/components/WhatsAppFab.astro';
 import siteData from '@/data/site.json';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -38,7 +39,7 @@ const schemaJson = Array.isArray(schema) ? schema : schema ? [schema] : [];
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#0E0E0E" />
+    <meta name="theme-color" content="#1D1D1B" />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -61,18 +62,15 @@ const schemaJson = Array.isArray(schema) ? schema : schema ? [schema] : [];
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Fonts -->
+    <!-- Fonts: Montserrat (brand) + Saira Stencil One (acentos racing) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Saira+Condensed:wght@600;700;800;900&display=swap"
-    />
-    <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Saira+Condensed:wght@600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,900&family=Saira+Condensed:ital,wght@0,700;0,800;0,900;1,800;1,900&family=Saira+Stencil+One&display=swap"
     />
+
+    <ClientRouter />
 
     {
       schemaJson.map((s) => (
@@ -87,11 +85,75 @@ const schemaJson = Array.isArray(schema) ? schema : schema ? [schema] : [];
     >
       Saltar al contenido
     </a>
+
+    <div id="page-progress" aria-hidden="true"></div>
+
     <Header />
     <main id="main">
       <slot />
     </main>
     <Footer />
     <WhatsAppFab />
+
+    <script>
+      // Scroll reveal observer
+      const initReveal = () => {
+        const els = document.querySelectorAll('.reveal, .reveal-stagger');
+        if (!els.length || !('IntersectionObserver' in window)) {
+          els.forEach((el) => el.classList.add('is-visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -60px 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      };
+
+      const initProgress = () => {
+        const bar = document.getElementById('page-progress');
+        if (!bar) return;
+        document.addEventListener('astro:before-preparation', () => {
+          bar.classList.remove('done');
+          bar.classList.add('loading');
+        });
+        document.addEventListener('astro:after-swap', () => {
+          bar.classList.remove('loading');
+          bar.classList.add('done');
+          setTimeout(() => bar.classList.remove('done'), 600);
+        });
+      };
+
+      // Tilt subtle on cards with [data-tilt]
+      const initTilt = () => {
+        const tilts = document.querySelectorAll<HTMLElement>('[data-tilt]');
+        tilts.forEach((el) => {
+          el.addEventListener('mousemove', (e: MouseEvent) => {
+            const rect = el.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            el.style.transform = `perspective(900px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
+          });
+          el.addEventListener('mouseleave', () => {
+            el.style.transform = '';
+          });
+        });
+      };
+
+      const init = () => {
+        initReveal();
+        initTilt();
+      };
+
+      document.addEventListener('astro:page-load', init);
+      initProgress();
+    </script>
   </body>
 </html>

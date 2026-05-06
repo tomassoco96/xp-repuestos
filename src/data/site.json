@@ -2,8 +2,8 @@
   "nombre": "XP Repuestos",
   "tagline": "Repuestos y accesorios para motos en toda la Argentina",
   "descripcion": "Repuestos originales y alternativos para motos y cuatriciclos. Más de 1.000 productos para Honda, Yamaha, Gilera, Zanella, Motomel, Keller y todas las marcas. Envíos a todo el país desde CABA.",
-  "telefono": "+54 987-6543",
-  "whatsapp": "5491198765643",
+  "telefono": "+54 9 11 2392-9823",
+  "whatsapp": "5491123929823",
   "whatsapp_mensaje_default": "Hola! Vengo de la web. Quería consultar por un repuesto.",
   "email": "hola@xprepuestos.com.ar",
   "direccion": {
@@ -12,9 +12,8 @@
     "pais": "Argentina"
   },
   "horarios": [
-    "Lunes a Viernes: 9:00 a 18:30",
-    "Sábados: 9:00 a 13:00",
-    "Domingos: cerrado"
+    "Lunes a Viernes: 9:00 a 16:30",
+    "Sábados y domingos: cerrado"
   ],
   "redes": {
     "instagram": {

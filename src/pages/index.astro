@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import ProductCard from '@/components/ProductCard.astro';
 import CategoryCard from '@/components/CategoryCard.astro';
-import { categories, getFeaturedProducts, getAllBrands } from '@/lib/products';
+import { categories, getFeaturedProducts, getAllBrands, products } from '@/lib/products';
 import siteData from '@/data/site.json';
 import { buildWhatsAppLink } from '@/lib/format';
 
@@ -10,6 +10,7 @@ const featured = getFeaturedProducts(8);
 const featuredCats = categories.filter((c) => c.destacado);
 const brands = getAllBrands();
 const wa = buildWhatsAppLink(siteData.whatsapp, siteData.whatsapp_mensaje_default);
+const totalProducts = products.length;
 
 const schema = [
   {
@@ -17,7 +18,7 @@ const schema = [
     '@type': 'LocalBusiness',
     '@id': 'https://xp-repuestos.vercel.app/#org',
     name: siteData.nombre,
-    image: 'https://xp-repuestos.vercel.app/og-default.jpg',
+    image: 'https://xp-repuestos.vercel.app/logo-xp-stack.svg',
     address: {
       '@type': 'PostalAddress',
       streetAddress: siteData.direccion.calle,
@@ -44,20 +45,31 @@ const schema = [
   description={siteData.descripcion}
   schema={schema}
 >
-  <!-- HERO -->
-  <section class="relative bg-[color:var(--color-ink)] text-[color:var(--color-paper)] overflow-hidden">
-    <div class="absolute inset-0 grid-noise opacity-50" aria-hidden="true"></div>
+  <!-- HERO CINEMÁTICO -->
+  <section class="relative bg-[color:var(--color-ink)] text-[color:var(--color-paper)] overflow-hidden min-h-[100svh] flex items-center">
+    <!-- Backdrop spinning logo -->
+    <div class="absolute inset-0 pointer-events-none flex items-center justify-end opacity-[0.08]" aria-hidden="true">
+      <img src="/logo-xp-dark.svg" class="w-[80vw] max-w-[900px] spin-slow" alt="" />
+    </div>
 
-    <div class="container-x relative grid lg:grid-cols-12 gap-10 py-20 md:py-28 items-center">
-      <div class="lg:col-span-7">
-        <span class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[color:var(--color-rust)] font-bold">
-          <span class="inline-block size-2 rounded-full bg-[color:var(--color-rust)] animate-pulse" aria-hidden="true"></span>
+    <!-- Grid noise texture -->
+    <div class="absolute inset-0 grid-noise opacity-40" aria-hidden="true"></div>
+
+    <!-- Diagonal red accent line -->
+    <div class="absolute top-0 right-0 w-[2px] h-full bg-gradient-to-b from-[color:var(--color-rust)] via-transparent to-transparent opacity-50" aria-hidden="true"></div>
+
+    <div class="container-x relative z-10 grid lg:grid-cols-12 gap-10 py-24 md:py-28 items-center">
+      <div class="lg:col-span-7 reveal-stagger">
+        <span class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-[color:var(--color-rust)] font-bold">
+          <span class="inline-block size-2 rounded-full bg-[color:var(--color-rust)] pulse-ring" aria-hidden="true"></span>
           {siteData.hero.kicker}
         </span>
 
-        <h1 class="mt-6 font-display font-black uppercase leading-[0.85] text-[clamp(3.2rem,9vw,7.5rem)]">
-          {siteData.hero.titulo_1}
-          <span class="block text-[color:var(--color-rust)]">{siteData.hero.titulo_2}.</span>
+        <h1 class="mt-6 font-display font-black uppercase leading-[0.85] text-[clamp(3.4rem,10vw,8rem)]">
+          <span class="block">{siteData.hero.titulo_1}</span>
+          <span class="block">
+            <span class="accent-italic text-[color:var(--color-rust)]">{siteData.hero.titulo_2}</span><span class="text-[color:var(--color-rust)]">.</span>
+          </span>
         </h1>
 
         <p class="mt-7 max-w-xl text-base md:text-lg text-[color:var(--color-paper)]/75 leading-relaxed">
@@ -65,28 +77,37 @@ const schema = [
         </p>
 
         <div class="mt-9 flex flex-wrap gap-3">
-          <a href="/tienda" class="btn btn-primary">{siteData.hero.cta_primario}</a>
-          <a href={wa} target="_blank" rel="noopener" class="btn btn-ghost !text-[color:var(--color-paper)] !border-[color:var(--color-paper)] hover:!bg-[color:var(--color-paper)] hover:!text-[color:var(--color-ink)]">
+          <a href="/tienda" class="btn btn-primary text-base">
+            {siteData.hero.cta_primario}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href={wa} target="_blank" rel="noopener" class="btn btn-ghost !text-[color:var(--color-paper)] !border-[color:var(--color-paper)] hover:!text-[color:var(--color-ink)] text-base">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
             {siteData.hero.cta_secundario}
           </a>
         </div>
       </div>
 
-      <div class="lg:col-span-5 hidden lg:block">
-        <div class="relative aspect-[4/5] border border-[color:var(--color-paper)]/20 p-8">
-          <div class="absolute -top-3 left-6 bg-[color:var(--color-ink)] px-3 text-[10px] uppercase tracking-widest text-[color:var(--color-paper)]/60">Catálogo vivo</div>
+      <div class="lg:col-span-5 hidden lg:block reveal">
+        <div class="relative aspect-[4/5] border-2 border-[color:var(--color-paper)]/15 p-7" data-tilt>
+          <div class="absolute -top-3 left-6 bg-[color:var(--color-ink)] px-3 text-[10px] uppercase tracking-[0.28em] text-[color:var(--color-paper)]/60 font-bold">Stock vivo</div>
+          <div class="absolute -top-3 right-6 bg-[color:var(--color-rust)] px-3 py-0.5 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-paper)] font-bold">{totalProducts} productos</div>
 
           <div class="grid grid-rows-3 gap-4 h-full">
             {featured.slice(0, 3).map((p) => (
               <a href={`/producto/${p.slug}`} class="flex items-center gap-4 border-b border-[color:var(--color-paper)]/10 pb-4 last:border-b-0 group">
                 <div class="size-20 shrink-0 product-img">
-                  <img src={p.imagen} alt="" loading="lazy" decoding="async" class="size-full object-contain p-1.5" />
+                  <img src={p.imagen} alt="" loading="lazy" decoding="async" class="size-full object-contain p-1.5 img-zoom" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-[10px] uppercase tracking-widest text-[color:var(--color-rust)] font-bold">{p.marca}</p>
-                  <p class="font-display uppercase font-bold text-sm leading-tight line-clamp-2 group-hover:text-[color:var(--color-rust)]">{p.nombre}</p>
+                  <p class="text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-rust)] font-bold">{p.marca}</p>
+                  <p class="font-display uppercase font-extrabold text-sm leading-tight line-clamp-2 group-hover:text-[color:var(--color-rust)] transition">{p.nombre}</p>
                 </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[color:var(--color-paper)]/40 group-hover:text-[color:var(--color-rust)] shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-[color:var(--color-paper)]/40 group-hover:text-[color:var(--color-rust)] shrink-0 transition-transform group-hover:translate-x-1">
                   <path d="M5 12h14M13 5l7 7-7 7" />
                 </svg>
               </a>
@@ -97,98 +118,115 @@ const schema = [
     </div>
 
     <!-- Trust bar -->
-    <div class="relative border-t border-[color:var(--color-paper)]/10">
+    <div class="absolute bottom-0 left-0 right-0 z-10 border-t border-[color:var(--color-paper)]/10 bg-[color:var(--color-ink)]">
       <div class="container-x grid grid-cols-2 md:grid-cols-4 divide-x divide-[color:var(--color-paper)]/10">
         {siteData.trust_bar.map((t) => (
-          <div class="px-2 py-6 text-center md:text-left first:pl-0">
+          <div class="px-2 py-5 text-center md:text-left first:pl-0">
             <p class="font-display font-black text-3xl md:text-4xl tabular text-[color:var(--color-paper)]">{t.valor}</p>
-            <p class="mt-1 text-xs uppercase tracking-widest text-[color:var(--color-paper)]/60">{t.etiqueta}</p>
+            <p class="mt-1 text-[10px] uppercase tracking-[0.22em] font-bold text-[color:var(--color-paper)]/55">{t.etiqueta}</p>
           </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="absolute bottom-28 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-[color:var(--color-paper)]/40 font-bold">
+      <span>Scroll</span>
+      <span class="block w-px h-12 bg-gradient-to-b from-[color:var(--color-paper)]/40 to-transparent"></span>
+    </div>
+  </section>
+
+  <!-- BRAND TICKER doble -->
+  <section class="bg-[color:var(--color-paper-soft)] border-y border-[color:var(--color-line)] overflow-hidden">
+    <div class="py-5">
+      <div class="ticker font-accent uppercase text-2xl md:text-3xl font-bold tracking-[0.04em] text-[color:var(--color-ink)]">
+        {[...brands, ...brands, ...brands].map((b) => (
+          <span class="flex items-center gap-4 shrink-0">
+            <span aria-hidden="true" class="text-[color:var(--color-rust)] text-base">●</span>
+            <span>{b}</span>
+          </span>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- BRAND TICKER -->
-  <section class="bg-[color:var(--color-paper-soft)] border-y border-[color:var(--color-ink)]/10 overflow-hidden py-6">
-    <div class="ticker font-display uppercase text-base md:text-lg font-bold tracking-widest text-[color:var(--color-ink)]/70">
-      {[...brands, ...brands].map((b) => (
-        <span class="flex items-center gap-3">
-          <span aria-hidden="true" class="text-[color:var(--color-rust)]">●</span>
-          <span>{b}</span>
-        </span>
-      ))}
-    </div>
-  </section>
-
   <!-- CATEGORÍAS -->
-  <section class="container-x py-20 md:py-28">
-    <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+  <section class="container-x py-24 md:py-32">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-12 reveal">
       <div>
         <span class="label-eyebrow">Catálogo</span>
-        <h2 class="mt-3 font-display font-black uppercase text-4xl md:text-5xl leading-none">
-          Buscá lo que <span class="text-[color:var(--color-rust)]">necesitás</span>
+        <h2 class="mt-4 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9]">
+          Buscá lo que <span class="accent-italic text-[color:var(--color-rust)]">necesitás</span>
         </h2>
       </div>
-      <a href="/tienda" class="text-sm font-display uppercase tracking-widest font-bold text-[color:var(--color-rust)] hover:underline">
+      <a href="/tienda" class="text-sm font-display uppercase tracking-[0.2em] font-bold text-[color:var(--color-rust)] hover:underline underline-offset-4">
         Ver todos los productos →
       </a>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 reveal-stagger">
       {featuredCats.map((c) => <CategoryCard category={c} />)}
     </div>
   </section>
 
   <!-- DESTACADOS -->
-  <section class="bg-[color:var(--color-paper-soft)] border-y border-[color:var(--color-ink)]/10 py-20 md:py-28">
-    <div class="container-x">
-      <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+  <section class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] py-24 md:py-32 relative overflow-hidden">
+    <!-- Background watermark -->
+    <div class="absolute -left-20 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none" aria-hidden="true">
+      <span class="font-display font-black text-[20rem] leading-none accent-italic">TOP</span>
+    </div>
+
+    <div class="container-x relative">
+      <div class="flex flex-wrap items-end justify-between gap-4 mb-12 reveal">
         <div>
           <span class="label-eyebrow">Top ventas</span>
-          <h2 class="mt-3 font-display font-black uppercase text-4xl md:text-5xl leading-none">
-            Los que más <span class="text-[color:var(--color-rust)]">salen</span>
+          <h2 class="mt-4 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9]">
+            Los que más <span class="accent-italic text-[color:var(--color-rust)]">salen</span>
           </h2>
         </div>
-        <a href="/tienda" class="text-sm font-display uppercase tracking-widest font-bold hover:text-[color:var(--color-rust)]">
+        <a href="/tienda" class="text-sm font-display uppercase tracking-[0.2em] font-bold hover:text-[color:var(--color-rust)] transition">
           Ver más →
         </a>
       </div>
 
-      <div class="grid gap-4 grid-cols-2 lg:grid-cols-4">
-        {featured.map((p) => <ProductCard product={p} />)}
+      <div class="grid gap-4 grid-cols-2 lg:grid-cols-4 reveal-stagger">
+        {featured.map((p, i) => <ProductCard product={p} index={i} />)}
       </div>
     </div>
   </section>
 
-  <!-- POR QUÉ -->
-  <section class="container-x py-20 md:py-28">
-    <div class="grid gap-10 lg:grid-cols-12">
-      <div class="lg:col-span-5">
+  <!-- POR QUÉ XP -->
+  <section class="container-x py-24 md:py-32">
+    <div class="grid gap-12 lg:grid-cols-12 items-start">
+      <div class="lg:col-span-5 lg:sticky lg:top-32 reveal">
         <span class="label-eyebrow">Por qué XP</span>
-        <h2 class="mt-3 font-display font-black uppercase text-4xl md:text-5xl leading-none">
-          Repuesto<br />justo. <span class="text-[color:var(--color-rust)]">Bien rápido.</span>
+        <h2 class="mt-4 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9]">
+          Repuesto<br />
+          <span class="accent-italic text-[color:var(--color-rust)]">justo. Bien rápido.</span>
         </h2>
         <p class="mt-6 text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed max-w-md">
           No vendemos lo que no usaríamos en nuestra propia moto. Si no estás seguro de qué necesitás, mandanos foto del repuesto roto por WhatsApp y te confirmamos compatibilidad antes de cobrarte un peso.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={wa} target="_blank" rel="noopener" class="btn btn-wa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+            </svg>
             Mandar foto por WhatsApp
           </a>
           <a href="/nuestra-historia" class="btn btn-ghost">Conocernos</a>
         </div>
       </div>
 
-      <div class="lg:col-span-7 grid gap-4 md:grid-cols-2">
+      <div class="lg:col-span-7 grid gap-4 md:grid-cols-2 reveal-stagger">
         {[
           { kicker: '01', titulo: 'Compatibilidad confirmada', detalle: 'Te decimos qué modelo de moto entra antes de la compra. Cero adivinanzas.' },
           { kicker: '02', titulo: 'Stock real, no foto de catálogo', detalle: 'Lo que ves publicado lo tenemos. Si no, te avisamos cuándo entra.' },
           { kicker: '03', titulo: 'Envío a todo el país', detalle: 'OCA, Andreani y Correo Argentino. Despachamos en 24/48 hs hábiles.' },
           { kicker: '04', titulo: 'Atención personalizada', detalle: 'Hablás con personas que arreglan motos, no con un bot.' },
         ].map((b) => (
-          <div class="border border-[color:var(--color-ink)]/15 p-6 hover:border-[color:var(--color-ink)] transition">
-            <span class="font-display font-black text-3xl text-[color:var(--color-rust)] tabular">{b.kicker}</span>
+          <div class="relative border border-[color:var(--color-line)] p-6 card-lift bg-[color:var(--color-bone)]">
+            <span class="font-display font-black text-3xl tabular text-[color:var(--color-rust)]">{b.kicker}</span>
             <h3 class="mt-3 font-display uppercase font-extrabold text-xl leading-tight">{b.titulo}</h3>
             <p class="mt-2 text-sm text-[color:var(--color-ink-soft)]/75 leading-relaxed">{b.detalle}</p>
           </div>
@@ -198,20 +236,24 @@ const schema = [
   </section>
 
   <!-- MAYORISTA CTA -->
-  <section class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] py-20 md:py-24">
-    <div class="container-x grid gap-8 lg:grid-cols-12 items-center">
-      <div class="lg:col-span-7">
+  <section class="bg-[color:var(--color-navy)] text-[color:var(--color-paper)] py-24 md:py-28 relative overflow-hidden">
+    <div class="absolute -right-32 top-1/2 -translate-y-1/2 opacity-[0.06] pointer-events-none" aria-hidden="true">
+      <img src="/logo-xp-dark.svg" class="w-[600px] spin-slow" alt="" style="animation-direction: reverse;" />
+    </div>
+    <div class="container-x grid gap-8 lg:grid-cols-12 items-center relative">
+      <div class="lg:col-span-7 reveal">
         <span class="label-eyebrow">Mayorista</span>
-        <h2 class="mt-3 font-display font-black uppercase text-4xl md:text-5xl leading-none">
-          ¿Tenés un<br />taller o local?
+        <h2 class="mt-4 font-display font-black uppercase text-4xl md:text-6xl leading-[0.9]">
+          ¿Tenés un<br />
+          <span class="accent-italic text-[color:var(--color-rust)]">taller o local?</span>
         </h2>
-        <p class="mt-6 text-base text-[color:var(--color-paper)]/75 leading-relaxed max-w-xl">
+        <p class="mt-6 text-base text-[color:var(--color-paper)]/80 leading-relaxed max-w-xl">
           Sumate al programa mayorista: precios escalonados por volumen, plazos de pago a 30 días para clientes con historial, y prioridad en stock nuevo.
         </p>
       </div>
-      <div class="lg:col-span-5 flex flex-col gap-3">
+      <div class="lg:col-span-5 flex flex-col gap-3 reveal">
         <a href="/mayorista" class="btn btn-primary text-base">Conocer condiciones</a>
-        <a href={wa} target="_blank" rel="noopener" class="btn btn-ghost !text-[color:var(--color-paper)] !border-[color:var(--color-paper)] hover:!bg-[color:var(--color-paper)] hover:!text-[color:var(--color-ink)] text-base">
+        <a href={wa} target="_blank" rel="noopener" class="btn btn-ghost !text-[color:var(--color-paper)] !border-[color:var(--color-paper)] hover:!text-[color:var(--color-ink)] text-base">
           Hablar con un asesor
         </a>
       </div>
