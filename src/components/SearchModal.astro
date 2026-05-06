@@ -1,0 +1,214 @@
+---
+/**
+ * Modal de búsqueda inteligente con atajo Ctrl/Cmd+K.
+ * Indexa nombre + marca + modelos + categoría + precio.
+ * Renderiza resultados en cliente — los productos están en JSON estático.
+ */
+---
+
+<div
+  id="xp-search-overlay"
+  data-xp-search-close
+  class="xp-search-overlay"
+  aria-hidden="true"
+></div>
+
+<div
+  id="xp-search-modal"
+  class="xp-search-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Búsqueda de productos"
+  aria-hidden="true"
+>
+  <div class="xp-search-card">
+    <div class="xp-search-input-row">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-[color:var(--color-steel)] shrink-0">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="M21 21l-4.35-4.35"></path>
+      </svg>
+      <input
+        type="search"
+        id="xp-search-input"
+        autocomplete="off"
+        placeholder="Buscá por producto, marca o modelo de moto..."
+        aria-label="Buscar productos"
+      />
+      <kbd class="xp-search-kbd hidden md:inline-flex">ESC</kbd>
+    </div>
+
+    <div id="xp-search-results" class="xp-search-results">
+      <div data-xp-search-empty class="xp-search-empty">
+        <p class="font-display uppercase font-extrabold text-base mb-3">Buscá lo que necesitás</p>
+        <p class="text-sm text-[color:var(--color-steel)]">
+          Escribí un repuesto, una marca o un modelo (ej: <button type="button" data-xp-search-suggest="kit pistón" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">kit pistón</button>, <button type="button" data-xp-search-suggest="Honda Wave" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">Honda Wave</button>, <button type="button" data-xp-search-suggest="casco" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">casco</button>).
+        </p>
+      </div>
+      <ul data-xp-search-list class="hidden divide-y divide-[color:var(--color-line)]"></ul>
+      <div data-xp-search-noresults class="xp-search-empty hidden">
+        <p class="font-display uppercase font-extrabold text-base mb-3">Sin resultados</p>
+        <p class="text-sm text-[color:var(--color-steel)]">
+          No encontramos nada con ese término. Probá con otra palabra o escribinos por WhatsApp y te lo conseguimos.
+        </p>
+      </div>
+    </div>
+
+    <footer class="xp-search-footer">
+      <span class="text-xs text-[color:var(--color-steel)]">
+        <kbd class="xp-search-kbd-inline">↑</kbd> <kbd class="xp-search-kbd-inline">↓</kbd> navegar · <kbd class="xp-search-kbd-inline">↵</kbd> abrir
+      </span>
+      <span class="text-xs text-[color:var(--color-steel)]" data-xp-search-count></span>
+    </footer>
+  </div>
+</div>
+
+<style is:global>
+  .xp-search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .xp-search-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .xp-search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4rem 1rem 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .xp-search-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .xp-search-card {
+    width: 100%;
+    max-width: 640px;
+    background: var(--color-bone);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 6rem);
+    overflow: hidden;
+  }
+
+  .xp-search-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .xp-search-input-row input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 1rem;
+    color: var(--color-ink);
+    font-family: inherit;
+  }
+  .xp-search-input-row input::placeholder {
+    color: var(--color-steel);
+  }
+
+  .xp-search-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.125rem 0.5rem;
+    font-family: ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-steel);
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+  }
+  .xp-search-kbd-inline {
+    display: inline-block;
+    padding: 1px 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 3px;
+  }
+
+  .xp-search-results {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 200px;
+  }
+  .xp-search-empty {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+
+  .xp-search-result {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .xp-search-result:hover,
+  .xp-search-result.is-active {
+    background: var(--color-paper-soft);
+  }
+  .xp-search-result-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: var(--color-paper);
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .xp-search-result-img-fallback {
+    width: 48px;
+    height: 48px;
+    background: var(--color-paper);
+    color: var(--color-steel);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .xp-search-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.25rem;
+    border-top: 1px solid var(--color-line);
+    background: var(--color-paper);
+  }
+
+  body.xp-search-no-scroll {
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,242 @@
+---
+import type { Producto } from '@/lib/products';
+
+interface Props {
+  products: Producto[];
+}
+
+const { products } = Astro.props;
+
+// Calcular marcas únicas y modelos únicos a partir del subset.
+const marcasMap = new Map<string, number>();
+const modelosMap = new Map<string, number>();
+let priceMin = Infinity;
+let priceMax = 0;
+
+for (const p of products) {
+  marcasMap.set(p.marca, (marcasMap.get(p.marca) ?? 0) + 1);
+  for (const m of p.modelos ?? []) {
+    modelosMap.set(m, (modelosMap.get(m) ?? 0) + 1);
+  }
+  if (p.precio > 0) {
+    priceMin = Math.min(priceMin, p.precio);
+    priceMax = Math.max(priceMax, p.precio);
+  }
+}
+if (!Number.isFinite(priceMin)) priceMin = 0;
+
+const marcas = [...marcasMap.entries()].sort((a, b) => b[1] - a[1]);
+const modelos = [...modelosMap.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30);
+---
+
+<aside class="xp-filter-aside" data-xp-filter-sidebar>
+  <!-- Toggle mobile -->
+  <button
+    type="button"
+    class="xp-filter-toggle lg:hidden"
+    data-xp-filter-toggle
+    aria-expanded="false"
+    aria-controls="xp-filter-panel"
+  >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 6h18M7 12h10M10 18h4" />
+    </svg>
+    <span>Filtrar productos</span>
+    <span data-xp-filter-count class="xp-filter-count">{products.length}</span>
+  </button>
+
+  <div id="xp-filter-panel" class="xp-filter-panel" data-xp-filter-panel>
+    <header class="xp-filter-header">
+      <h2 class="font-display uppercase font-extrabold text-lg flex items-center gap-3">
+        <span class="inline-block w-6 h-px bg-[color:var(--color-rust)]"></span>
+        Filtros
+      </h2>
+      <button type="button" data-xp-filter-clear class="text-xs uppercase tracking-widest font-bold text-[color:var(--color-steel)] hover:text-[color:var(--color-rust)] transition">
+        Limpiar
+      </button>
+    </header>
+
+    <!-- Precio -->
+    <fieldset class="xp-filter-group">
+      <legend class="xp-filter-legend">Precio</legend>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        <label class="text-xs">
+          <span class="block uppercase tracking-widest font-bold text-[color:var(--color-steel)] mb-1">Desde</span>
+          <input
+            type="number"
+            min="0"
+            step="100"
+            placeholder={String(priceMin)}
+            data-xp-filter-price="min"
+            class="w-full border border-[color:var(--color-line)] px-2 py-1.5 text-sm bg-[color:var(--color-paper)] tabular"
+          />
+        </label>
+        <label class="text-xs">
+          <span class="block uppercase tracking-widest font-bold text-[color:var(--color-steel)] mb-1">Hasta</span>
+          <input
+            type="number"
+            min="0"
+            step="100"
+            placeholder={String(priceMax)}
+            data-xp-filter-price="max"
+            class="w-full border border-[color:var(--color-line)] px-2 py-1.5 text-sm bg-[color:var(--color-paper)] tabular"
+          />
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Disponibilidad -->
+    <fieldset class="xp-filter-group">
+      <legend class="xp-filter-legend">Disponibilidad</legend>
+      <label class="flex items-center gap-2 cursor-pointer text-sm mt-2">
+        <input type="checkbox" data-xp-filter-stock class="size-4 accent-[color:var(--color-rust)]" />
+        <span>Solo en stock</span>
+      </label>
+      <label class="flex items-center gap-2 cursor-pointer text-sm mt-1">
+        <input type="checkbox" data-xp-filter-img class="size-4 accent-[color:var(--color-rust)]" />
+        <span>Solo con foto</span>
+      </label>
+    </fieldset>
+
+    <!-- Marca -->
+    {marcas.length > 1 && (
+      <fieldset class="xp-filter-group">
+        <legend class="xp-filter-legend">Marca</legend>
+        <div class="mt-2 max-h-48 overflow-y-auto space-y-1">
+          {marcas.map(([marca, count]) => (
+            <label class="flex items-center gap-2 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                value={marca}
+                data-xp-filter-marca
+                class="size-4 accent-[color:var(--color-rust)]"
+              />
+              <span class="flex-1 truncate">{marca}</span>
+              <span class="text-xs text-[color:var(--color-steel)] tabular">{count}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    )}
+
+    <!-- Modelo de moto -->
+    {modelos.length > 0 && (
+      <fieldset class="xp-filter-group">
+        <legend class="xp-filter-legend">Modelo de moto</legend>
+        <div class="mt-2 max-h-48 overflow-y-auto space-y-1">
+          {modelos.map(([modelo, count]) => (
+            <label class="flex items-center gap-2 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                value={modelo}
+                data-xp-filter-modelo
+                class="size-4 accent-[color:var(--color-rust)]"
+              />
+              <span class="flex-1 truncate">{modelo}</span>
+              <span class="text-xs text-[color:var(--color-steel)] tabular">{count}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    )}
+
+    <!-- Aplicar (mobile) -->
+    <button type="button" data-xp-filter-close class="btn btn-primary w-full mt-4 lg:hidden">
+      Ver resultados (<span data-xp-filter-count-btn>{products.length}</span>)
+    </button>
+  </div>
+</aside>
+
+<style is:global>
+  .xp-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 0;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+  .xp-filter-count {
+    margin-left: auto;
+    background: var(--color-rust);
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .xp-filter-panel {
+    background: var(--color-bone);
+    border: 1px solid var(--color-line);
+    padding: 1.25rem;
+  }
+
+  /* Mobile: drawer ocupa todo el ancho cuando is-open */
+  @media (max-width: 1023px) {
+    .xp-filter-panel {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 75;
+      background: var(--color-paper);
+      overflow-y: auto;
+      padding: 1.5rem;
+      max-width: 100vw;
+    }
+    .xp-filter-panel.is-open {
+      display: block;
+    }
+    .xp-filter-panel.is-open + .xp-filter-toggle,
+    body.xp-filter-no-scroll {
+      overflow: hidden;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .xp-filter-panel {
+      display: block !important;
+      position: sticky;
+      top: 8rem;
+      max-height: calc(100vh - 10rem);
+      overflow-y: auto;
+    }
+  }
+
+  .xp-filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-line);
+    margin-bottom: 1rem;
+  }
+  .xp-filter-group {
+    border: 0;
+    padding: 0;
+    margin: 0 0 1.25rem 0;
+  }
+  .xp-filter-legend {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--color-rust);
+    padding: 0;
+  }
+
+  /* Producto que no matchea el filtro */
+  [data-xp-product-card][data-xp-hidden="true"] {
+    display: none !important;
+  }
+</style>

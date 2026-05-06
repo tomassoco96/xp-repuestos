@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly RESEND_API_KEY: string;
   readonly EMAIL_FROM: string;
   readonly ADMIN_NOTIFY_EMAIL: string;
+  readonly ANTHROPIC_API_KEY: string;
 }
 
 interface ImportMeta {

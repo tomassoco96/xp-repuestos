@@ -1,0 +1,506 @@
+---
+/**
+ * Bot AI flotante de XP Repuestos.
+ * Botón arriba del WhatsApp FAB. Click → abre panel de chat.
+ * Llama a /api/chat (Claude Haiku) en cada mensaje.
+ */
+---
+
+<button
+  type="button"
+  id="xp-bot-toggle"
+  class="xp-bot-toggle"
+  aria-label="Abrir asistente XP"
+  aria-expanded="false"
+  aria-controls="xp-bot-panel"
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-icon="bot">
+    <rect x="3" y="11" width="18" height="10" rx="2"/>
+    <circle cx="12" cy="5" r="2"/>
+    <path d="M12 7v4"/>
+    <line x1="8" y1="16" x2="8" y2="16"/>
+    <line x1="16" y1="16" x2="16" y2="16"/>
+  </svg>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" data-icon="close" class="hidden">
+    <path d="M18 6L6 18M6 6l12 12" />
+  </svg>
+  <span class="xp-bot-toggle-label">Asistente XP</span>
+</button>
+
+<div
+  id="xp-bot-panel"
+  class="xp-bot-panel"
+  role="dialog"
+  aria-label="Asistente virtual de XP Repuestos"
+  aria-hidden="true"
+>
+  <header class="xp-bot-header">
+    <div class="xp-bot-avatar" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="10" rx="2"/>
+        <circle cx="12" cy="5" r="2"/>
+        <path d="M12 7v4"/>
+      </svg>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="font-display uppercase font-extrabold text-sm leading-tight">Asistente XP</p>
+      <p class="text-[10px] text-[color:var(--color-paper)]/70 flex items-center gap-1.5 mt-0.5">
+        <span class="size-1.5 rounded-full bg-emerald-400 inline-block"></span>
+        En línea · respuesta inmediata
+      </p>
+    </div>
+    <button type="button" id="xp-bot-close" class="size-8 rounded-md text-[color:var(--color-paper)]/80 hover:bg-white/10 hover:text-[color:var(--color-paper)] flex items-center justify-center transition" aria-label="Cerrar chat">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="xp-bot-body" id="xp-bot-messages" aria-live="polite" aria-atomic="false">
+    <!-- Mensajes se renderean acá -->
+  </div>
+
+  <div class="xp-bot-suggestions" data-xp-bot-suggestions>
+    <button type="button" data-xp-bot-suggest="¿Qué horario tienen?" class="xp-bot-suggest">¿Qué horario?</button>
+    <button type="button" data-xp-bot-suggest="¿Hacen envío al interior?" class="xp-bot-suggest">¿Envíos al interior?</button>
+    <button type="button" data-xp-bot-suggest="Necesito un kit pistón para Honda CG 150" class="xp-bot-suggest">Pistón CG 150</button>
+    <button type="button" data-xp-bot-suggest="¿Cómo funciona la garantía?" class="xp-bot-suggest">Garantía</button>
+  </div>
+
+  <form id="xp-bot-form" class="xp-bot-form">
+    <input
+      id="xp-bot-input"
+      type="text"
+      placeholder="Escribí tu consulta..."
+      maxlength="500"
+      autocomplete="off"
+      aria-label="Tu mensaje"
+    />
+    <button type="submit" class="xp-bot-send" aria-label="Enviar mensaje" id="xp-bot-send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+      </svg>
+    </button>
+  </form>
+
+  <p class="xp-bot-disclaimer">
+    Asistente con IA · respuestas orientativas · para temas urgentes <a href="https://wa.me/5491123929823" target="_blank" rel="noopener" class="underline">consultá por WhatsApp</a>
+  </p>
+</div>
+
+<style is:global>
+  .xp-bot-toggle {
+    position: fixed;
+    bottom: 5.25rem;
+    right: 1rem;
+    z-index: 49;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: 0.875rem 1.25rem;
+    border-radius: 9999px;
+    border: 0;
+    cursor: pointer;
+    box-shadow: 0 12px 32px -8px rgba(29, 29, 27, 0.55);
+    transition: transform 0.3s ease, background 0.3s ease;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .xp-bot-toggle:hover {
+    background: var(--color-rust);
+    transform: translateY(-2px);
+  }
+  .xp-bot-toggle-label {
+    display: none;
+  }
+  @media (min-width: 640px) {
+    .xp-bot-toggle-label { display: inline; }
+  }
+
+  .xp-bot-panel {
+    position: fixed;
+    z-index: 80;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: 380px;
+    margin-left: auto;
+    background: var(--color-paper);
+    border: 1px solid var(--color-ink)/15;
+    box-shadow: 0 24px 80px -10px rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 2rem);
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .xp-bot-panel.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  @media (min-width: 640px) {
+    .xp-bot-toggle {
+      bottom: 5.5rem;
+      right: 1.25rem;
+    }
+    .xp-bot-panel {
+      bottom: 5.5rem;
+      right: 1.25rem;
+      left: auto;
+      width: 380px;
+      max-height: 600px;
+    }
+  }
+
+  .xp-bot-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .xp-bot-avatar {
+    width: 38px;
+    height: 38px;
+    background: var(--color-rust);
+    color: var(--color-paper);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .xp-bot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--color-paper-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    min-height: 200px;
+  }
+
+  .xp-bot-msg {
+    max-width: 85%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    word-wrap: break-word;
+  }
+  .xp-bot-msg.bot {
+    background: var(--color-bone);
+    border: 1px solid var(--color-line);
+    align-self: flex-start;
+    border-top-left-radius: 4px;
+  }
+  .xp-bot-msg.user {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    align-self: flex-end;
+    border-top-right-radius: 4px;
+  }
+  .xp-bot-msg.error {
+    background: var(--color-rust-soft);
+    border: 1px solid var(--color-rust);
+    color: var(--color-ink);
+    font-size: 0.8125rem;
+  }
+  .xp-bot-typing {
+    align-self: flex-start;
+    background: var(--color-bone);
+    border: 1px solid var(--color-line);
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border-top-left-radius: 4px;
+    display: inline-flex;
+    gap: 4px;
+  }
+  .xp-bot-typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-steel);
+    animation: xp-bot-bounce 1.2s infinite;
+  }
+  .xp-bot-typing span:nth-child(2) { animation-delay: 0.15s; }
+  .xp-bot-typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes xp-bot-bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  .xp-bot-suggestions {
+    display: flex;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .xp-bot-suggestions::-webkit-scrollbar { display: none; }
+  .xp-bot-suggestions.hidden { display: none; }
+  .xp-bot-suggest {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--color-ink)/20;
+    color: var(--color-ink);
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .xp-bot-suggest:hover {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .xp-bot-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-line);
+  }
+  .xp-bot-form input {
+    flex: 1;
+    border: 1px solid var(--color-line);
+    background: var(--color-bone);
+    padding: 0.5rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    outline: 0;
+    color: var(--color-ink);
+    font-family: inherit;
+  }
+  .xp-bot-form input:focus {
+    border-color: var(--color-rust);
+  }
+  .xp-bot-send {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    background: var(--color-rust);
+    color: var(--color-paper);
+    border: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .xp-bot-send:hover { background: var(--color-rust-deep); }
+  .xp-bot-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .xp-bot-disclaimer {
+    padding: 0.5rem 1rem;
+    font-size: 0.625rem;
+    color: var(--color-steel);
+    text-align: center;
+    background: var(--color-paper-soft);
+    border-top: 1px solid var(--color-line);
+  }
+  .xp-bot-disclaimer a {
+    color: var(--color-rust);
+  }
+</style>
+
+<script>
+  type Msg = { role: 'user' | 'assistant'; content: string };
+
+  const STORAGE_KEY = 'xp-bot-msgs-v1';
+  const INITIAL_MSG: Msg = {
+    role: 'assistant',
+    content: '¡Hola! Soy el asistente de XP Repuestos. Preguntame por productos, marcas, envíos o lo que necesites. ¿En qué te ayudo?',
+  };
+
+  let history: Msg[] = [INITIAL_MSG];
+
+  function loadHistory() {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          history = parsed;
+        }
+      }
+    } catch {}
+  }
+
+  function saveHistory() {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    } catch {}
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderMessages() {
+    const body = document.getElementById('xp-bot-messages');
+    if (!body) return;
+    body.innerHTML = history
+      .map((m) => `<div class="xp-bot-msg ${m.role === 'user' ? 'user' : 'bot'}">${escapeHtml(m.content)}</div>`)
+      .join('');
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showTyping() {
+    const body = document.getElementById('xp-bot-messages');
+    if (!body) return;
+    const el = document.createElement('div');
+    el.id = 'xp-bot-typing-indicator';
+    el.className = 'xp-bot-typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function hideTyping() {
+    document.getElementById('xp-bot-typing-indicator')?.remove();
+  }
+
+  async function sendMessage(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    history.push({ role: 'user', content: trimmed });
+    renderMessages();
+    saveHistory();
+
+    const input = document.getElementById('xp-bot-input') as HTMLInputElement | null;
+    const sendBtn = document.getElementById('xp-bot-send') as HTMLButtonElement | null;
+    if (input) input.value = '';
+    if (sendBtn) sendBtn.disabled = true;
+
+    showTyping();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history }),
+      });
+      const data = await res.json().catch(() => ({}));
+      hideTyping();
+      if (data.reply) {
+        history.push({ role: 'assistant', content: data.reply });
+      } else {
+        history.push({
+          role: 'assistant',
+          content: data.error || 'Tuve un problema para responderte. Probá de nuevo o escribime por WhatsApp al +54 9 11 2392-9823.',
+        });
+      }
+      saveHistory();
+      renderMessages();
+    } catch {
+      hideTyping();
+      history.push({
+        role: 'assistant',
+        content: 'Sin conexión. Probá de nuevo en un momento o escribinos por WhatsApp.',
+      });
+      saveHistory();
+      renderMessages();
+    } finally {
+      if (sendBtn) sendBtn.disabled = false;
+      input?.focus();
+    }
+  }
+
+  function openBot() {
+    const panel = document.getElementById('xp-bot-panel');
+    const toggle = document.getElementById('xp-bot-toggle');
+    if (!panel || !toggle) return;
+    panel.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.querySelector<SVGElement>('[data-icon="bot"]')?.classList.add('hidden');
+    toggle.querySelector<SVGElement>('[data-icon="close"]')?.classList.remove('hidden');
+    document.getElementById('xp-bot-input')?.focus();
+  }
+
+  function closeBot() {
+    const panel = document.getElementById('xp-bot-panel');
+    const toggle = document.getElementById('xp-bot-toggle');
+    if (!panel || !toggle) return;
+    panel.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.querySelector<SVGElement>('[data-icon="bot"]')?.classList.remove('hidden');
+    toggle.querySelector<SVGElement>('[data-icon="close"]')?.classList.add('hidden');
+  }
+
+  function init() {
+    if ((window as any).__xpBotBound) return;
+    (window as any).__xpBotBound = true;
+
+    loadHistory();
+    renderMessages();
+
+    document.getElementById('xp-bot-toggle')?.addEventListener('click', () => {
+      const panel = document.getElementById('xp-bot-panel');
+      if (panel?.classList.contains('is-open')) closeBot();
+      else openBot();
+    });
+
+    document.getElementById('xp-bot-close')?.addEventListener('click', closeBot);
+
+    document.getElementById('xp-bot-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('xp-bot-input') as HTMLInputElement | null;
+      if (!input) return;
+      sendMessage(input.value);
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-xp-bot-suggest]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const text = btn.getAttribute('data-xp-bot-suggest') ?? '';
+        sendMessage(text);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const panel = document.getElementById('xp-bot-panel');
+        if (panel?.classList.contains('is-open')) closeBot();
+      }
+    });
+  }
+
+  init();
+  document.addEventListener('astro:page-load', () => {
+    // Re-render mensajes después de view transition.
+    loadHistory();
+    renderMessages();
+  });
+</script>

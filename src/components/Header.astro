@@ -10,8 +10,6 @@ const navLinks = [
   { href: '/nuestra-historia', label: 'Nosotros' },
   { href: '/contacto', label: 'Contacto' },
 ];
-
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <div class="bg-[color:var(--color-ink)] text-[color:var(--color-paper)] text-xs">
@@ -27,14 +25,14 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 </div>
 
 <header class="sticky top-0 z-40 border-b border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-paper)]/80" transition:persist>
-  <div class="container-x flex items-center justify-between gap-6 py-4">
-    <a href="/" class="flex items-center gap-3 group" aria-label="XP Repuestos · inicio">
+  <div class="container-x flex items-center justify-between gap-3 md:gap-6 py-4">
+    <a href="/" class="flex items-center gap-2 md:gap-3 group shrink-0" aria-label="XP Repuestos · inicio">
       <img
         src="/logo-xp.svg"
         alt=""
         width="48"
         height="48"
-        class="size-11 transition-transform duration-500 group-hover:rotate-[24deg]"
+        class="size-10 md:size-11 transition-transform duration-500 group-hover:rotate-[24deg]"
       />
       <span class="font-display text-xl font-black uppercase leading-none hidden sm:flex flex-col gap-0.5">
         <span>XP</span>
@@ -42,29 +40,35 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       </span>
     </a>
 
-    <nav class="hidden lg:flex items-center gap-8" aria-label="Navegación principal">
+    <nav class="hidden lg:flex items-center gap-8" aria-label="Navegación principal" data-xp-nav>
       {
-        navLinks.map((l) => {
-          const isActive = pathname === l.href || (l.href !== '/' && pathname.startsWith(l.href));
-          return (
-            <a
-              href={l.href}
-              data-active={isActive ? 'true' : 'false'}
-              class:list={[
-                'nav-link font-display uppercase tracking-wide text-sm font-bold transition',
-                isActive
-                  ? 'text-[color:var(--color-rust)]'
-                  : 'text-[color:var(--color-ink)] hover:text-[color:var(--color-rust)]',
-              ]}
-            >
-              {l.label}
-            </a>
-          );
-        })
+        navLinks.map((l) => (
+          <a
+            href={l.href}
+            data-href={l.href}
+            data-active="false"
+            class="nav-link font-display uppercase tracking-wide text-sm font-bold transition text-[color:var(--color-ink)] hover:text-[color:var(--color-rust)]"
+          >
+            {l.label}
+          </a>
+        ))
       }
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        data-xp-search-toggle
+        class="inline-flex items-center justify-center size-10 rounded-md border border-[color:var(--color-ink)]/15 hover:border-[color:var(--color-ink)] hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)] transition"
+        aria-label="Buscar productos (Ctrl+K)"
+        title="Buscar (Ctrl+K)"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+        </svg>
+      </button>
+
       <CartButton />
 
       <button
@@ -85,8 +89,9 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
   <!-- Mobile nav -->
   <nav
     id="mobile-nav"
-    class="lg:hidden hidden border-t border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)]"
+    class="lg:hidden hidden border-t border-[color:var(--color-ink)]/10 bg-[color:var(--color-paper)] max-h-[calc(100vh-5rem)] overflow-y-auto"
     aria-label="Navegación móvil"
+    data-xp-nav-mobile
   >
     <ul class="container-x py-4 flex flex-col gap-1">
       {
@@ -94,14 +99,16 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
           <li>
             <a
               href={l.href}
-              class="block py-2 font-display uppercase font-bold text-base hover:text-[color:var(--color-rust)]"
+              data-href={l.href}
+              data-active="false"
+              class="block py-2.5 font-display uppercase font-bold text-base hover:text-[color:var(--color-rust)] transition data-[active=true]:text-[color:var(--color-rust)]"
             >
               {l.label}
             </a>
           </li>
         ))
       }
-      <li class="pt-2 border-t border-[color:var(--color-ink)]/10 mt-2">
+      <li class="pt-3 border-t border-[color:var(--color-ink)]/10 mt-3">
         <span class="label-eyebrow">Categorías</span>
         <ul class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
           {
@@ -123,16 +130,59 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 </header>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  /**
+   * Marca el link activo del nav según la URL actual.
+   * Necesario porque el header usa transition:persist (no se re-renderiza
+   * en navegaciones View Transitions, así que pathname server-side queda
+   * congelado al primer load).
+   */
+  function refreshActiveNav() {
+    const path = location.pathname.replace(/\/$/, '') || '/';
+    const links = document.querySelectorAll<HTMLAnchorElement>('[data-xp-nav] a, [data-xp-nav-mobile] a[data-href]');
+    links.forEach((link) => {
+      const href = link.getAttribute('data-href') || '';
+      let active = false;
+      if (href === '/') {
+        active = path === '/';
+      } else {
+        active = path === href || path.startsWith(href + '/');
+      }
+      link.setAttribute('data-active', String(active));
+      if (active) {
+        link.classList.add('text-[color:var(--color-rust)]');
+        link.classList.remove('text-[color:var(--color-ink)]');
+      } else {
+        link.classList.remove('text-[color:var(--color-rust)]');
+        link.classList.add('text-[color:var(--color-ink)]');
+      }
+    });
+  }
+
+  function initMobileNav() {
     const toggle = document.getElementById('nav-toggle');
     const nav = document.getElementById('mobile-nav');
     if (!toggle || !nav) return;
-    const handle = () => {
+    if ((toggle as any).__xpBound) return;
+    (toggle as any).__xpBound = true;
+    toggle.addEventListener('click', () => {
       const isOpen = !nav.classList.contains('hidden');
       nav.classList.toggle('hidden');
       toggle.setAttribute('aria-expanded', String(!isOpen));
       toggle.setAttribute('aria-label', isOpen ? 'Abrir menú' : 'Cerrar menú');
-    };
-    toggle.addEventListener('click', handle);
+    });
+    // Cerrar mobile nav al navegar
+    nav.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => {
+        nav.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  refreshActiveNav();
+  initMobileNav();
+  document.addEventListener('astro:page-load', () => {
+    refreshActiveNav();
+    initMobileNav();
   });
 </script>

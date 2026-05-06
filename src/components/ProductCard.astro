@@ -8,22 +8,42 @@ interface Props {
 }
 
 const { product, index = 0 } = Astro.props;
+const hasImage = Boolean(product.imagen && product.imagen.trim() !== '');
 ---
 
-<article class="group relative flex flex-col h-full bg-[color:var(--color-bone)] border border-[color:var(--color-line)] card-lift">
+<article
+  class="group relative flex flex-col h-full bg-[color:var(--color-bone)] border border-[color:var(--color-line)] card-lift"
+  data-xp-product-card
+  data-xp-precio={product.precio}
+  data-xp-marca={product.marca}
+  data-xp-modelos={(product.modelos ?? []).join('|')}
+  data-xp-stock={String(product.stock)}
+  data-xp-image={String(hasImage)}
+>
   <!-- Corner accent -->
   <span class="absolute top-0 right-0 size-0 border-t-[24px] border-r-[24px] border-t-[color:var(--color-rust)] border-r-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true"></span>
 
   <a href={`/producto/${product.slug}`} class="block product-img aspect-square overflow-hidden">
-    <img
-      src={product.imagen}
-      alt={product.nombre}
-      loading={index < 4 ? 'eager' : 'lazy'}
-      decoding="async"
-      width="600"
-      height="600"
-      class="w-full h-full object-contain p-4 img-zoom"
-    />
+    {hasImage ? (
+      <img
+        src={product.imagen}
+        alt={product.nombre}
+        loading={index < 4 ? 'eager' : 'lazy'}
+        decoding="async"
+        width="600"
+        height="600"
+        class="w-full h-full object-contain p-4 img-zoom"
+      />
+    ) : (
+      <div class="w-full h-full flex flex-col items-center justify-center gap-2 text-[color:var(--color-steel)] bg-[color:var(--color-paper-soft)]">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="6" cy="17" r="4"/>
+          <circle cx="18" cy="17" r="4"/>
+          <path d="M14 17H6l-2-7h10l4 7zM10 10V7h3l3 3"/>
+        </svg>
+        <span class="text-[10px] uppercase tracking-widest font-bold">Sin foto</span>
+      </div>
+    )}
   </a>
 
   <div class="flex flex-col flex-1 p-4 gap-2">
