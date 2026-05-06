@@ -1,0 +1,247 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+
+export const prerender = true;
+---
+
+<Layout title="Checkout" description="Finalizá tu compra en XP Repuestos.">
+  <Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Carrito', href: '/carrito' }, { label: 'Checkout' }]} />
+
+  <section class="container-x">
+    <div class="border-t-2 border-[color:var(--color-ink)] pt-8 reveal">
+      <span class="label-eyebrow">Checkout</span>
+      <h1 class="mt-4 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+        Tus <span class="accent-italic text-[color:var(--color-rust)]">datos</span>
+      </h1>
+      <p class="mt-4 max-w-xl text-sm text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+        Completá tus datos. Te redirigimos a Mercado Pago para pagar de forma segura. Cuando confirmemos el pago te llega un mail con el seguimiento.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-x mt-12 mb-20">
+    <div id="xp-checkout-empty" class="text-center text-[color:var(--color-steel)] py-12">
+      Tu carrito está vacío. <a href="/tienda" class="underline underline-offset-2 hover:text-[color:var(--color-rust)]">Volver al catálogo</a>.
+    </div>
+
+    <form
+      id="xp-checkout-form"
+      class="grid lg:grid-cols-12 gap-10 hidden"
+      autocomplete="on"
+      novalidate
+    >
+      <div class="lg:col-span-7 space-y-6">
+        <fieldset class="border border-[color:var(--color-line)] bg-[color:var(--color-bone)] p-6">
+          <legend class="px-2 font-display uppercase text-sm font-bold tracking-wider">Datos personales</legend>
+          <div class="grid gap-4 md:grid-cols-2 mt-4">
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Nombre *</span>
+              <input name="nombre" type="text" required minlength="2" maxlength="80" autocomplete="given-name" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Apellido *</span>
+              <input name="apellido" type="text" required minlength="2" maxlength="80" autocomplete="family-name" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block md:col-span-2">
+              <span class="text-xs uppercase tracking-widest font-bold">Email *</span>
+              <input name="email" type="email" required maxlength="120" autocomplete="email" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Teléfono / WhatsApp *</span>
+              <input name="telefono" type="tel" required minlength="8" maxlength="20" autocomplete="tel" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">DNI</span>
+              <input name="dni" type="text" maxlength="11" inputmode="numeric" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="border border-[color:var(--color-line)] bg-[color:var(--color-bone)] p-6">
+          <legend class="px-2 font-display uppercase text-sm font-bold tracking-wider">Dirección de envío</legend>
+          <div class="grid gap-4 md:grid-cols-2 mt-4">
+            <label class="block md:col-span-2">
+              <span class="text-xs uppercase tracking-widest font-bold">Calle y número *</span>
+              <input name="direccion" type="text" required minlength="3" maxlength="120" autocomplete="street-address" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Ciudad *</span>
+              <input name="ciudad" type="text" required maxlength="80" autocomplete="address-level2" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Provincia *</span>
+              <input name="provincia" type="text" required maxlength="80" autocomplete="address-level1" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block">
+              <span class="text-xs uppercase tracking-widest font-bold">Código postal *</span>
+              <input name="codigoPostal" type="text" required maxlength="10" autocomplete="postal-code" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)]" />
+            </label>
+            <label class="block md:col-span-2">
+              <span class="text-xs uppercase tracking-widest font-bold">Notas adicionales (opcional)</span>
+              <textarea name="notas" maxlength="500" rows="3" class="mt-1 w-full border border-[color:var(--color-line)] px-3 py-2 bg-[color:var(--color-paper)] resize-y"></textarea>
+            </label>
+          </div>
+        </fieldset>
+
+        <p id="xp-checkout-error" class="hidden text-sm text-[color:var(--color-rust)] font-bold"></p>
+      </div>
+
+      <aside class="lg:col-span-5">
+        <div class="lg:sticky lg:top-32 border border-[color:var(--color-ink)] bg-[color:var(--color-bone)] p-6">
+          <h2 class="font-display uppercase font-extrabold text-xl mb-4 flex items-center gap-3">
+            <span class="inline-block w-6 h-px bg-[color:var(--color-rust)]"></span>
+            Resumen
+          </h2>
+
+          <ul id="xp-checkout-items" class="space-y-3 mb-4 max-h-80 overflow-y-auto"></ul>
+
+          <div class="border-t border-[color:var(--color-line)] pt-4 space-y-1">
+            <div class="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span id="xp-checkout-subtotal" class="font-display font-black tabular">$0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span>Envío</span>
+              <span class="text-xs text-[color:var(--color-steel)]">a coordinar tras el pago</span>
+            </div>
+            <div class="flex justify-between text-base mt-3 border-t border-[color:var(--color-line)] pt-3">
+              <span class="font-bold">Total estimado</span>
+              <span id="xp-checkout-total" class="font-display font-black tabular text-xl">$0</span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            id="xp-checkout-submit"
+            class="btn btn-primary w-full mt-6 text-base"
+          >
+            Pagar con Mercado Pago
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+
+          <p class="text-[10px] text-[color:var(--color-steel)] mt-3 leading-relaxed">
+            Tus datos viajan cifrados (HTTPS). El cobro lo procesa Mercado Pago — XP Repuestos no almacena datos de tu tarjeta.
+          </p>
+        </div>
+      </aside>
+    </form>
+  </section>
+
+  <script>
+    import { $cart } from '@/lib/cart-store';
+    import { products } from '@/lib/products';
+    import { formatPrice } from '@/lib/format';
+
+    const empty = document.getElementById('xp-checkout-empty');
+    const form = document.getElementById('xp-checkout-form') as HTMLFormElement | null;
+    const itemsEl = document.getElementById('xp-checkout-items');
+    const subtotalEl = document.getElementById('xp-checkout-subtotal');
+    const totalEl = document.getElementById('xp-checkout-total');
+    const submitBtn = document.getElementById('xp-checkout-submit') as HTMLButtonElement | null;
+    const errorEl = document.getElementById('xp-checkout-error');
+
+    function escapeHtml(s: string): string {
+      return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function render(items: { slug: string; qty: number }[]) {
+      if (!form || !empty || !itemsEl || !subtotalEl || !totalEl) return;
+
+      if (items.length === 0) {
+        empty.classList.remove('hidden');
+        form.classList.add('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+      form.classList.remove('hidden');
+
+      let subtotal = 0;
+      itemsEl.innerHTML = items
+        .map((it) => {
+          const p = products.find((x) => x.slug === it.slug);
+          if (!p) return '';
+          const sub = p.precio * it.qty;
+          subtotal += sub;
+          return `
+            <li class="flex gap-3 text-sm">
+              <div class="size-12 shrink-0 product-img">
+                <img src="${escapeHtml(p.imagen)}" alt="" class="size-full object-contain p-1" loading="lazy" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-display uppercase font-bold text-xs leading-tight line-clamp-2">${escapeHtml(p.nombre)}</p>
+                <p class="text-xs text-[color:var(--color-steel)] mt-0.5">x${it.qty}</p>
+              </div>
+              <p class="font-display font-black tabular text-sm">${formatPrice(sub)}</p>
+            </li>
+          `;
+        })
+        .join('');
+
+      subtotalEl.textContent = formatPrice(subtotal);
+      totalEl.textContent = formatPrice(subtotal);
+    }
+
+    render($cart.get());
+    $cart.subscribe(render);
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form || !errorEl || !submitBtn) return;
+      errorEl.classList.add('hidden');
+      errorEl.textContent = '';
+
+      const data = new FormData(form);
+      const buyer = {
+        nombre: String(data.get('nombre') ?? ''),
+        apellido: String(data.get('apellido') ?? ''),
+        email: String(data.get('email') ?? ''),
+        telefono: String(data.get('telefono') ?? ''),
+        dni: String(data.get('dni') ?? ''),
+        direccion: String(data.get('direccion') ?? ''),
+        ciudad: String(data.get('ciudad') ?? ''),
+        provincia: String(data.get('provincia') ?? ''),
+        codigoPostal: String(data.get('codigoPostal') ?? ''),
+        notas: String(data.get('notas') ?? ''),
+      };
+
+      const items = $cart.get();
+      if (items.length === 0) {
+        errorEl.textContent = 'Tu carrito está vacío.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Procesando...';
+
+      try {
+        const res = await fetch('/api/checkout/create-preference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items, buyer }),
+        });
+        const json = await res.json();
+
+        if (!res.ok || !json.initPoint) {
+          throw new Error(json.error ?? 'No se pudo iniciar el pago. Probá de nuevo.');
+        }
+
+        // Redirigir a Mercado Pago.
+        window.location.href = json.initPoint;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Error inesperado.';
+        errorEl.textContent = msg;
+        errorEl.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Pagar con Mercado Pago';
+      }
+    });
+  </script>
+</Layout>

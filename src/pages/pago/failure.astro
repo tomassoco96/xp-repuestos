@@ -1,0 +1,44 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import siteData from '@/data/site.json';
+import { buildWhatsAppLink } from '@/lib/format';
+
+export const prerender = true;
+
+const wa = buildWhatsAppLink(
+  siteData.whatsapp,
+  'Hola! Tuve un problema al pagar en la web. ¿Me ayudan?',
+);
+---
+
+<Layout title="Pago no completado" description="No pudimos completar tu pago.">
+  <section class="container-x py-32 text-center max-w-2xl mx-auto">
+    <div class="inline-flex items-center justify-center size-20 rounded-full bg-red-50 text-red-600 mb-6">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+    </div>
+
+    <span class="label-eyebrow">Pago no completado</span>
+    <h1 class="mt-4 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+      No pudimos<br />
+      <span class="accent-italic text-[color:var(--color-rust)]">cobrar el pago.</span>
+    </h1>
+
+    <p class="mt-6 max-w-md mx-auto text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+      Puede ser por saldo, datos de tarjeta o un rechazo del banco. Tu carrito sigue intacto. Probá con otro medio de pago o escribinos por WhatsApp y te ayudamos a cerrar la compra.
+    </p>
+
+    <div class="mt-9 flex flex-wrap justify-center gap-3">
+      <a href="/checkout" class="btn btn-dark">Volver al checkout</a>
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-wa">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+        </svg>
+        Pedir ayuda
+      </a>
+    </div>
+  </section>
+</Layout>

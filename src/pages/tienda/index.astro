@@ -4,6 +4,8 @@ import ProductCard from '@/components/ProductCard.astro';
 import CategoryCard from '@/components/CategoryCard.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import { categories, products } from '@/lib/products';
+
+export const prerender = true;
 ---
 
 <Layout title="Tienda" description="Catálogo completo de XP Repuestos. Repuestos y accesorios para motos en Argentina.">

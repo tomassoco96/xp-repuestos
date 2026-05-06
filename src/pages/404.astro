@@ -3,6 +3,8 @@ import Layout from '@/layouts/Layout.astro';
 import siteData from '@/data/site.json';
 import { buildWhatsAppLink } from '@/lib/format';
 
+export const prerender = true;
+
 const wa = buildWhatsAppLink(
   siteData.whatsapp,
   'Hola! Estaba navegando la web y llegué a una página que no existe. Quería consultar por un repuesto.',

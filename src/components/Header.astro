@@ -1,6 +1,7 @@
 ---
 import siteData from '@/data/site.json';
 import { categories } from '@/lib/products';
+import CartButton from '@/components/CartButton.astro';
 
 const navLinks = [
   { href: '/', label: 'Inicio' },
@@ -64,14 +65,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
     </nav>
 
     <div class="flex items-center gap-3">
-      <a
-        href={`https://wa.me/${siteData.whatsapp}?text=${encodeURIComponent(siteData.whatsapp_mensaje_default)}`}
-        class="btn btn-primary text-xs hidden sm:inline-flex"
-        target="_blank"
-        rel="noopener"
-      >
-        Consultar
-      </a>
+      <CartButton />
 
       <button
         type="button"

@@ -6,6 +6,8 @@ import { categories, getFeaturedProducts, getAllBrands, products } from '@/lib/p
 import siteData from '@/data/site.json';
 import { buildWhatsAppLink } from '@/lib/format';
 
+export const prerender = true;
+
 const featured = getFeaturedProducts(8);
 const featuredCats = categories.filter((c) => c.destacado);
 const brands = getAllBrands();

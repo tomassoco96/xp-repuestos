@@ -1,0 +1,37 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+export const prerender = true;
+---
+
+<Layout title="Pago aprobado" description="Pago aprobado en XP Repuestos.">
+  <section class="container-x py-32 text-center max-w-2xl mx-auto">
+    <div class="inline-flex items-center justify-center size-20 rounded-full bg-emerald-50 text-emerald-600 mb-6">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+
+    <span class="label-eyebrow">Pago aprobado</span>
+    <h1 class="mt-4 font-display font-black uppercase text-5xl md:text-7xl leading-[0.9]">
+      ¡Listo!<br />
+      <span class="accent-italic text-[color:var(--color-rust)]">Recibimos tu pago.</span>
+    </h1>
+
+    <p class="mt-6 max-w-md mx-auto text-base text-[color:var(--color-ink-soft)]/80 leading-relaxed">
+      En las próximas horas te llegará un mail con el detalle de tu compra y el código de seguimiento del envío. Si tenés alguna duda, escribinos por WhatsApp.
+    </p>
+
+    <div class="mt-9 flex flex-wrap justify-center gap-3">
+      <a href="/" class="btn btn-dark">Volver al inicio</a>
+      <a href="/tienda" class="btn btn-ghost">Seguir comprando</a>
+    </div>
+  </section>
+
+  <script>
+    // Limpiar carrito tras pago exitoso.
+    import { clearCart } from '@/lib/cart-store';
+    clearCart();
+  </script>
+</Layout>

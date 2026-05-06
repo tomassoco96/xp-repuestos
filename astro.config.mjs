@@ -1,10 +1,16 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
   site: 'https://xp-repuestos.vercel.app',
-  output: 'static',
+  output: 'server',
+  adapter: vercel({
+    webAnalytics: { enabled: false },
+    imageService: false,
+    maxDuration: 10,
+  }),
   trailingSlash: 'never',
   integrations: [sitemap()],
   vite: {
@@ -15,5 +21,8 @@ export default defineConfig({
   },
   image: {
     domains: ['xprepuestos.com.ar'],
+  },
+  security: {
+    checkOrigin: true,
   },
 });

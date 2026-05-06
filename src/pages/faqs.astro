@@ -4,6 +4,8 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import siteData from '@/data/site.json';
 import { buildWhatsAppLink } from '@/lib/format';
 
+export const prerender = true;
+
 const wa = buildWhatsAppLink(siteData.whatsapp, siteData.whatsapp_mensaje_default);
 
 const faqs = [

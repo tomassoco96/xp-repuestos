@@ -1,0 +1,47 @@
+---
+/**
+ * Botón del carrito en el header. Muestra contador con productos en carrito.
+ * Click → abre drawer (CartDrawer).
+ */
+---
+
+<button
+  type="button"
+  id="xp-cart-button"
+  class="relative inline-flex items-center justify-center size-10 rounded-md border border-[color:var(--color-ink)]/15 hover:border-[color:var(--color-ink)] hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-paper)] transition"
+  aria-label="Abrir carrito"
+>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="9" cy="21" r="1"></circle>
+    <circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+  </svg>
+  <span
+    id="xp-cart-count"
+    class="absolute -top-1 -right-1 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-[color:var(--color-rust)] text-[color:var(--color-bone)] text-[10px] font-bold px-1 hidden"
+    aria-live="polite"
+  >0</span>
+</button>
+
+<script>
+  import { $cart, $cartOpen, totalQty, openCart } from '@/lib/cart-store';
+
+  const button = document.getElementById('xp-cart-button');
+  const badge = document.getElementById('xp-cart-count');
+
+  function paint(items: { slug: string; qty: number }[]) {
+    if (!badge) return;
+    const count = totalQty(items);
+    if (count > 0) {
+      badge.textContent = String(count);
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  paint($cart.get());
+  $cart.subscribe(paint);
+
+  button?.addEventListener('click', () => openCart());
+</script>

@@ -4,6 +4,8 @@ import ProductCard from '@/components/ProductCard.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import { categories, getProductsByCategory } from '@/lib/products';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return categories.map((c) => ({
     params: { categoria: c.slug },

@@ -4,6 +4,8 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import siteData from '@/data/site.json';
 import { buildWhatsAppLink } from '@/lib/format';
 
+export const prerender = true;
+
 const wa = buildWhatsAppLink(
   siteData.whatsapp,
   'Hola! Vengo de la web. Quería sumarme al programa mayorista, soy un (taller / local de repuestos / ferretería) ubicado en (ciudad).',
