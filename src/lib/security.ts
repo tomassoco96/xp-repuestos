@@ -51,26 +51,34 @@ export function isSameOrigin(request: Request): boolean {
   const origin = request.headers.get('origin');
   const referer = request.headers.get('referer');
 
-  // Si está configurada PUBLIC_SITE_URL la usamos como fuente autoritativa.
-  // Si no, usamos la host del propio request (auto-detección).
-  let expectedHost: string;
+  // Lista de hosts aceptados:
+  //  - PUBLIC_SITE_URL (si está configurada).
+  //  - Host del propio request (cuando viene a través del proxy de Vercel).
+  //  - Host del header `host` (suele coincidir con el alias público).
+  //  - x-forwarded-host (cuando el adapter rewrite la URL al pathname interno).
+  const allowed = new Set<string>();
   try {
-    const expected = import.meta.env.PUBLIC_SITE_URL;
-    expectedHost = expected
-      ? new URL(expected).host
-      : new URL(request.url).host;
-  } catch {
-    return false;
-  }
+    const env = import.meta.env.PUBLIC_SITE_URL;
+    if (env) allowed.add(new URL(env).host);
+  } catch {}
+  try {
+    allowed.add(new URL(request.url).host);
+  } catch {}
+  const hostHeader = request.headers.get('host');
+  if (hostHeader) allowed.add(hostHeader);
+  const xfHost = request.headers.get('x-forwarded-host');
+  if (xfHost) allowed.add(xfHost);
+
+  if (allowed.size === 0) return false;
 
   try {
     if (origin) {
       const originHost = new URL(origin).host;
-      if (originHost === expectedHost) return true;
+      if (allowed.has(originHost)) return true;
     }
     if (referer) {
       const refererHost = new URL(referer).host;
-      if (refererHost === expectedHost) return true;
+      if (allowed.has(refererHost)) return true;
     }
     return false;
   } catch {
