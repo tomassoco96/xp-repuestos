@@ -2,20 +2,22 @@
 /**
  * Drawer lateral con el contenido del carrito.
  * El render de items lo hace cart.client.ts.
+ *
+ * NOTA: el transform open/closed se hace con CSS puro (no Tailwind) para
+ * evitar conflictos de especificidad con `--tw-translate-x` de Tailwind v4.
  */
 ---
 
-<div id="xp-cart-overlay" data-xp-cart-close class="fixed inset-0 bg-black/50 z-[60] opacity-0 pointer-events-none transition-opacity duration-300" aria-hidden="true"></div>
+<div id="xp-cart-overlay" data-xp-cart-close class="xp-cart-overlay" aria-hidden="true"></div>
 
 <aside
   id="xp-cart-drawer"
-  class="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md bg-[color:var(--color-paper)] shadow-2xl translate-x-full transition-transform duration-400 flex flex-col"
-  style="transition-timing-function: var(--ease-out-expo);"
+  class="xp-cart-drawer"
   aria-label="Carrito de compras"
   aria-hidden="true"
   tabindex="-1"
 >
-  <header class="flex items-center justify-between gap-4 p-5 border-b border-[color:var(--color-line)]">
+  <header class="xp-cart-drawer__header">
     <h2 class="font-display uppercase font-black text-2xl">Tu carrito</h2>
     <button
       type="button"
@@ -29,14 +31,14 @@
     </button>
   </header>
 
-  <div class="flex-1 overflow-y-auto p-5">
+  <div class="xp-cart-drawer__body">
     <p id="xp-cart-empty" class="text-center text-sm text-[color:var(--color-steel)] py-12">
       Todavía no agregaste productos.
     </p>
     <ul id="xp-cart-items" class="space-y-4 hidden"></ul>
   </div>
 
-  <footer id="xp-cart-footer" class="border-t border-[color:var(--color-line)] p-5 hidden">
+  <footer id="xp-cart-footer" class="xp-cart-drawer__footer hidden">
     <div class="flex items-baseline justify-between mb-1 text-sm">
       <span>Subtotal</span>
       <span id="xp-cart-subtotal" class="font-display font-black tabular text-base">$0</span>
@@ -54,10 +56,63 @@
   </footer>
 </aside>
 
-<style>
-  #xp-cart-overlay.is-open { opacity: 1; pointer-events: auto; }
-  #xp-cart-drawer.is-open { transform: translateX(0); }
-  body.xp-no-scroll { overflow: hidden; }
+<style is:global>
+  .xp-cart-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .xp-cart-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .xp-cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 70;
+    width: 100%;
+    max-width: 28rem;
+    background-color: var(--color-paper);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+  .xp-cart-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  .xp-cart-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .xp-cart-drawer__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 1.25rem;
+  }
+  .xp-cart-drawer__footer {
+    border-top: 1px solid var(--color-line);
+    padding: 1.25rem;
+  }
+
+  body.xp-no-scroll {
+    overflow: hidden;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
